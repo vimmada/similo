@@ -5,4 +5,16 @@ Similo is for fashion enthusiasts looking to draw inspiration from others’ out
 1. `git clone https://github.com/perryjiang/similo.git`
 2. Install dependencies mentioned under "Building Projects with Native Code" [here](https://facebook.github.io/react-native/docs/getting-started.html).
 3. `cd similo && yarn install` _or_ `cd similo && npm install`
-4. Follow [this guide](https://facebook.github.io/react-native/docs/debugging.html) to enable React Native's live or hot reloading (optional).
+4. `react-native link`
+
+### iOS
+1. Open the project in Xcode, and using the Project Navigator, expand the RNCamera project and delete the FaceDetector folder. **The project will not compile on iOS without this step!**
+
+## Building Similo
+1. `cd similo && react-native start`
+2. In another terminal, navigate to the project directory and run `npm run <ios/android>`.
+3. Optional: follow [this guide](https://facebook.github.io/react-native/docs/debugging.html) to enable React Native's live or hot reloading.
+
+## Misc
+1. Until [this issue](https://github.com/facebook/react-native/pull/17672) is resolved, please run `rm $SIMILO/node_modules/react-native/local-cli/core/__fixtures__/files/package.json` in order to
+properly load fonts and icons.

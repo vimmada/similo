@@ -17,13 +17,15 @@ export default class BufferScreen extends Component {
 
     this.getRecommendations = this.getRecommendations.bind(this);
     this.imageLoaded = this.imageLoaded.bind(this);
+
+    this.props.navigation.setParams({ getRecommendations: this.getRecommendations });
+
   }
 
   getRecommendations() {
-    const { photo } = this.props.navigation.state.params;
-
-    uploadPhoto(photo)
-      .then(data => this.props.navigation.navigate('Recommendations', { data }));
+    const { params } = this.props.navigation.state.params;
+    
+    this.props.navigation.navigate('Recommendations', { params });
   }
 
   imageLoaded() {
@@ -37,10 +39,9 @@ export default class BufferScreen extends Component {
     return (
       <View>
         <FullScreenPhoto
-          blur
           photo={photo}
           viewRef={this.state.viewRef}
-          onLoadEnd={this.imageLoaded}
+          onLoadEnd={this.imageLoaded.bind(this)}
         />
         <View
           style={{

@@ -14,10 +14,13 @@ export default function FillScreenImage(props) {
           style={{ width, height }}
           onLoadEnd={props.onLoadEnd}
         />
+        {(this.state.viewRef == null ? null :
         <BlurView
           viewRef={props.viewRef}
           style={{ position: 'absolute', width, height }}
-        />
+          blurType="light"
+          blurAmount
+        />)}
       </View>
     );
   }

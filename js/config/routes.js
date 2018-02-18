@@ -21,6 +21,18 @@ const stackRoutes = {
   },
   Buffer: {
     screen: BufferScreen,
+    navigationOptions: ({ navigation }) => {
+      const params = navigation.state.params || {};
+
+      return {
+        title: 'Searching',
+        headerRight: (
+          <TouchableOpacity onPress={params.getRecommendations}>
+            <FontAwesome name="chevron-right" size={24} />
+          </TouchableOpacity>
+        ),
+      };
+    },
   },
   Confirm: {
     screen: ConfirmScreen,
@@ -47,21 +59,45 @@ const stackRoutes = {
   },
   Home: {
     screen: HomeScreen,
+    navigationOptions: ({ navigation }) => {
+      const params = navigation.state.params || {};
+      return {
+        title: 'Similo',
+      };
+    },
   },
   History: {
     screen: HistoryScreen,
   },
   Recommendations: {
     screen: RecommendationsScreen,
+    navigationOptions: ({ navigation }) => {
+      const params = navigation.state.params || {};
+      return {
+        title: 'Search Results',
+      };
+    },
   },
   Product: {
     screen: ProductScreen,
   },
   SavedItems: {
     screen: SavedItemsScreen,
+    navigationOptions: ({ navigation }) => {
+      const params = navigation.state.params || {};
+      return {
+        title: 'Saved Items',
+      };
+    },
   },
   Settings: {
     screen: SettingsScreen,
+    navigationOptions: ({ navigation }) => {
+      const params = navigation.state.params || {};
+      return {
+        title: 'Settings',
+      };
+    },
   },
   UploadPhoto: {
     screen: UploadPhotoScreen,

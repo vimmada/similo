@@ -18,10 +18,15 @@ export default class HomeScreen extends Component {
     // TODO: incorporate <Camera />
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text>Similo!</Text>
+        <Text>Upload</Text>
         <Button
           title="Upload Photo"
           onPress={() => { this.props.navigation.navigate('UploadPhoto') }}
+        />
+        <Text>History</Text>
+        <Button
+          title="Previous Searches"
+          onPress={() => { this.props.navigation.navigate('History') }}
         />
       </View>
     );

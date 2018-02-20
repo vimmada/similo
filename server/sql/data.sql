@@ -1,0 +1,2 @@
+INSERT INTO users(username, fullname, email, password) VALUES ('Vamsi', 'Vamsi Nimmagadda', 'vimmada@gmail.com', "vamsi100");
+INSERT INTO items(itemid, description, link) VALUES (3, 'State of the art xbox', "www.xbox.com");

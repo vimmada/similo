@@ -12,6 +12,7 @@ def hello_world():
 @app.route('/saved_items/', methods=["GET"])
 def get_saved_item():
     context = {}
+    context["hello"] = "cody"
     return flask.make_response(flask.jsonify(**context), 200)
 
 
@@ -50,7 +51,7 @@ def search():
     context = {}
     return flask.make_response(flask.jsonify(**context), 201)
     
-# Adds 
+
 @app.route('/user/add/', methods=["POST"])
 def create_user():
     context = {}

@@ -26,15 +26,12 @@ export default class ProductScreen extends Component {
   render() {
     const { params } = this.props.navigation.state;
     const name = params ? params.name : null;
-    const brand = params ? params.brand : null;
     const price = params ? params.price : null;
-    const description = params ? params.description : null;
+    const url = params ? params.url : null;
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <Text> {JSON.stringify(name)} </Text>
-        <Text> By {JSON.stringify(brand)} </Text>
-        <Text> Product Description </Text>
-        <Text> {JSON.stringify(description)} </Text>
+        <Text> Link: {JSON.stringify(url)} </Text>
         <Text> ${JSON.stringify(price)} </Text>
         <Button
           title={this.state.btext}

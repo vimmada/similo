@@ -20,10 +20,9 @@ export default class SavedItemsScreen extends Component {
 
   selectItem(item) {
     this.props.navigation.navigate('Product', {
-      name: item.name,
-      brand: item.brand,
+      name: item.item_title,
       price: item.price,
-      description: item.Description,
+      description: item.description,
     });
   }
 

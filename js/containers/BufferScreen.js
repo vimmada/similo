@@ -23,13 +23,16 @@ export default class BufferScreen extends Component {
   }
 
   getRecommendations() {
-    const { params } = this.props.navigation.state.params;
-    
-    this.props.navigation.navigate('Recommendations', { params });
-  }
+    const { photo } = this.props.navigation.state.params;
+
+    uploadPhoto(photo)
+      .then(data => this.props.navigation.navigate('Recommendations', { data }));
+    }
 
   imageLoaded() {
     this.setState({ viewRef: findNodeHandle(this.backgroundImage) });
+
+    this.getRecommendations(this.props.navigation.state.params.photo);
   }
 
   render() {

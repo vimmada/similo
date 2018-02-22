@@ -20,41 +20,29 @@ export default class RecommendationsScreen extends Component {
 
   selectItem(item) {
     this.props.navigation.navigate('Product', {
-      name: item.name,
-      brand: item.brand,
-      price: item.price,
-      description: item.Description,
+      name: item['title'],
+      price: item['price'],
+      url: item['product_url'],
     });
   }
 
   _renderItem = ({item}) => {
-    const { params } = this.props.navigation.state.params;
     return (
       <View>
         <TouchableOpacity onPress={() => this.selectItem(item)}>
-          <Text style={{ color: "black" }}>{item.name}</Text>
-          <Text style={{ color: "black" }}>By {item.brand}</Text>
-          <Text style={{ color: "black" }}>${item.price}</Text>
+          <Text style={{ color: "black" }}>{item['title']}</Text>
+          <Text style={{ color: "black" }}>${item['price']}</Text>
         </TouchableOpacity>
       </View>
     );
   };
 
   render() {
+    const { params } = this.props.navigation.state;
+    const data = params ? params.data : null;
     return (
       <FlatList
-        data={[
-          {key: 'a', name: 'Glasses', brand: 'Alien', price: 100.00, Description: 'Slob on my Knob'},
-          {key: 'b', name: 'Glasses1', brand: 'Alien', price: 100.00, Description: 'Slob on my Knob'},
-          {key: 'c', name: 'Glasses2', brand: 'Alien', price: 100.00, Description: 'Slob on my Knob'},
-          {key: 'd', name: 'Glasses3', brand: 'Alien', price: 100.00, Description: 'Slob on my Knob'},
-          {key: 'e', name: 'Glasses4', brand: 'Alien', price: 100.00, Description: 'Slob on my Knob'},
-          {key: 'f', name: 'Glasses5', brand: 'Alien', price: 100.00, Description: 'Slob on my Knob'},
-          {key: 'g', name: 'Glasses6', brand: 'Alien', price: 100.00, Description: 'Slob on my Knob'},
-          {key: 'h', name: 'Glasses7', brand: 'Alien', price: 100.00, Description: 'Slob on my Knob'},
-          {key: 'i', name: 'Glasses8', brand: 'Alien', price: 100.00, Description: 'Slob on my Knob'},
-          {key: 'j', name: 'Glasses9', brand: 'Alien', price: 100.00, Description: 'Slob on my Knob'},
-        ]}
+        data={data}
         renderItem={this._renderItem}
       />
     );

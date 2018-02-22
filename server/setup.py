@@ -12,6 +12,7 @@ setup(
         'flask-restful',
         'arrow',
         'sh',
-        'requests'
+        'requests',
+        'bottlenose'
     ],
 )

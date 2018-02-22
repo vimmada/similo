@@ -15,6 +15,9 @@ Similo is for fashion enthusiasts looking to draw inspiration from others’ out
 2. In another terminal, navigate to the project directory and run `npm run <ios/android>`.
 3. Optional: follow [this guide](https://facebook.github.io/react-native/docs/debugging.html) to enable React Native's live or hot reloading.
 
+## Running The Backend Server
+To run the backend flask server just clone the repository shown in "Getting started" and switch to branch backend. Go inside the server file and do "pip install -e .". Once everything is installed properly run "./bin/image-processorrun" and go to localhost:8000. It should say: "Hello, World!". In order to view the api routes go to imageProcessor/views/index.py.  
+
 ## Misc
 1. Until [this issue](https://github.com/facebook/react-native/pull/17672) is resolved, please run `rm $SIMILO/node_modules/react-native/local-cli/core/__fixtures__/files/package.json` in order to
 properly load fonts and icons.

@@ -65,7 +65,6 @@ def search():
     context = {}
     if not request.json or not "image" in request.json:
         abort(400)
-    
 
     # 1. Add it to history of searches
     userids_with_email = query_db(

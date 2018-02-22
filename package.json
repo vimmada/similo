@@ -13,7 +13,7 @@
     "react": "16.2.0",
     "react-native": "^0.53.0",
     "react-native-blur": "^3.2.2",
-    "react-native-camera": "git+https://git@github.com/react-native-community/react-native-camera",
+    "react-native-camera": "git+https://git@github.com/react-native-community/react-native-camera.git",
     "react-native-camera-roll-picker": "^1.2.3",
     "react-native-vector-icons": "^4.5.0",
     "react-navigation": "^1.0.0-beta.31"

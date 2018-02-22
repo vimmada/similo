@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Button, Text, View } from 'react-native';
 
+import Camera from '../components/Camera';
+
 export default class HomeScreen extends Component {
   constructor(props) {
     super(props);
@@ -15,7 +17,6 @@ export default class HomeScreen extends Component {
   }
 
   render() {
-    // TODO: incorporate <Camera />
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <Text>Upload</Text>

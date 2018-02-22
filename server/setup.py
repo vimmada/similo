@@ -13,6 +13,9 @@ setup(
         'arrow',
         'sh',
         'requests',
-        'bottlenose'
+        'bottlenose',
+        'bs4',
+        'marshmallow',
+        'lxml'
     ],
 )

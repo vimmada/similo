@@ -68,10 +68,10 @@ def search():
     
 
     # 1. Add it to history of searches
-    # userids_with_email = query_db(
-    #     '''
-    #     SELECT userid FROM Users WHERE email = ?''', (request.json['email'],))
-    # userid = userids_with_email[0] 
+    userids_with_email = query_db(
+        '''
+        SELECT userid FROM Users WHERE email = ?''', (request.json['email'],))
+    userid = userids_with_email[0] 
 
     # TODO: Uncomment this section below and fix why the schema cannot handle request.json['image']
     # query_db(
@@ -110,10 +110,13 @@ def search():
         ]
     }
     data = json.dumps(data)
-    # results = requests.post(url='https://vision.googleapis.com/v1/images:annotate?key=' + cred.Google.API_KEY, data = data)
-    # results = results.json()
-    # labels = results['responses'][0]['labelAnnotations']
-    labels = ["jeans"]
+    results = requests.post(url='https://vision.googleapis.com/v1/images:annotate?key=' + cred.Google.API_KEY, data = data)
+    results = results.json()
+    labels = results['responses'][0]['labelAnnotations']
+
+    # TODO: Filter keywords for clothing items only
+    # keywords = [label.get("description") for label in labels]
+    keywords = ["blue", "jeans"]
 
     # 3. Uses amazon's search engine to get the item details
     amazon = bottlenose.Amazon(
@@ -122,7 +125,7 @@ def search():
             cred.Amazon.ASSOCIATE_ID,
             Parser=lambda text: BeautifulSoup(text, 'xml'))
     res = amazon.ItemSearch(
-            Keywords= " ".join(labels), 
+            Keywords= " ".join(keywords), 
             ResponseGroup="Images,ItemAttributes",
             SearchIndex="Fashion")
 
@@ -148,7 +151,7 @@ def search():
     # 4 returns json of items(title, image_url, product_url, price)
     schema = ItemSchema(many=True)
     items_dict = schema.dump(items)
-    context["items"] = items_dict
+    context["items"] = items_dict.data
     return flask.make_response(flask.jsonify(**context), 201)
     
 

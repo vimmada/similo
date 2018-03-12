@@ -1,62 +1,66 @@
+'use strict';
+
 import React, { Component } from 'react';
-import { Dimensions, findNodeHandle, View } from 'react-native';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { Animated, Dimensions, Easing, ImageBackground, View } from 'react-native';
 
-import { uploadPhoto } from '../lib';
-import FullScreenPhoto from '../components/FullScreenPhoto';
-
-function Spinner() {
-  return <FontAwesome name="spinner" color='#ffffff' size={72} />;
-}
+const AnimatedIcon = Animated.createAnimatedComponent(Icon);
 
 export default class BufferScreen extends Component {
+  static navigationOptions = {
+    title: 'Fetching Results...',
+  };
+
   constructor(props) {
     super(props);
 
-    this.state = { viewRef: null };
-
-    this.getRecommendations = this.getRecommendations.bind(this);
-    this.imageLoaded = this.imageLoaded.bind(this);
-
-    this.props.navigation.setParams({ getRecommendations: this.getRecommendations });
+    this.state = { spinAnimation: new Animated.Value(0) };
   }
 
-  getRecommendations() {
-    const { photo } = this.props.navigation.state.params;
-
-    uploadPhoto(photo)
-      .then(data => this.props.navigation.navigate('Recommendations', { data }));
+  componentDidMount() {
+    this.spin();
   }
 
-  imageLoaded() {
-    this.setState({ viewRef: findNodeHandle(this.backgroundImage) });
+  spin() {
+    this.state.spinAnimation.setValue(0);
 
-    this.getRecommendations(this.props.navigation.state.params.photo);
+    Animated.timing(
+      this.state.spinAnimation,
+      {
+        toValue: 1,
+        duration: 4000,
+        easing: Easing.linear,
+      }
+    ).start(() => this.spin());
   }
 
   render() {
+    const { photo } = this.props.navigation.state.params
     const { width, height } = Dimensions.get('window');
-    const { photo } = this.props.navigation.state.params;
+
+    const spin = this.state.spinAnimation.interpolate({
+      inputRange: [0, 1],
+      outputRange: ['0deg', '360deg'],
+    });
 
     return (
-      <View>
-        <FullScreenPhoto
-          photo={photo}
-          viewRef={this.state.viewRef}
-          onLoadEnd={this.imageLoaded}
-        />
-        <View
-          style={{
-            width,
-            height,
-            flex: 1,
-            alignItems: 'center',
-            justifyContent: 'center',
-            position: 'absolute',
-          }}
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ImageBackground
+            blurRadius={4}
+            resizeMode="contain"
+            style={{ width, height }}
+            source={{ uri: photo.path }}
         >
-          <Spinner />
-        </View>
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center',
+                         width, height, backgroundColor: 'rgba(0, 0, 0, 0.6)' }}>
+            <AnimatedIcon
+              name="spinner"
+              color='#ffffff'
+              size={72}
+              style={{ transform: [{ rotate: spin }] }}
+            />
+          </View>
+        </ImageBackground>
       </View>
     );
   }

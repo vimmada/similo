@@ -1,33 +1,36 @@
 import React, { Component } from 'react';
-import { Button, Text, View } from 'react-native';
+import { View, Button } from 'react-native';
+import ImagePicker from 'react-native-image-crop-picker';
 
-import Camera from '../components/Camera';
+import { selectPhotoFromGallery, takePhotoWithCamera } from '../lib';
 
 export default class HomeScreen extends Component {
-  constructor(props) {
-    super(props);
-
-    this.onPictureTaken = this.onPictureTaken.bind(this);
-  }
-
-  onPictureTaken(picture) {
-    throw Error('Not implemented!');
-
-    this.props.navigation.navigate('Confirm', { picture });
-  }
+  static navigationOptions = {
+    title: 'Similo',
+  };
 
   render() {
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text>Upload</Text>
+      <View style={{ flex: 1, flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <Button
+          title="Take Photo"
+          onPress={takePhotoWithCamera.bind(this)}
+        />
         <Button
           title="Upload Photo"
-          onPress={() => { this.props.navigation.navigate('UploadPhoto') }}
+          onPress={selectPhotoFromGallery.bind(this)}
         />
-        <Text>History</Text>
         <Button
-          title="Previous Searches"
-          onPress={() => { this.props.navigation.navigate('History') }}
+          title="Saved Items"
+          onPress={() => this.props.navigation.navigate('SavedItems')}
+        />
+        <Button
+          title="History"
+          onPress={() => this.props.navigation.navigate('History')}
+        />
+        <Button
+          title="Settings"
+          onPress={() => this.props.navigation.navigate('Settings')}
         />
       </View>
     );

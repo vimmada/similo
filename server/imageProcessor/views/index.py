@@ -20,17 +20,43 @@ def hello_world():
     return 'Hello, World!'
 
 
-@app.route('/saved_items/', methods=["GET"])
+@app.route('/saved_items/', methods=["POST"])
 def get_saved_item():
     """
     Returns a list of items
+
+    Changed to POST request since it doesn't seem like we're using session data.
+    Assume post request has email passed in.
     """
-    context = {}
+    if not request.json or 'email' not in request.json:
+        abort(400)
+    email = request.json['email']
+    context = {
+        'email': email,
+        'items': []
+    }
+    userid = int(query_db('SELECT userid FROM users WHERE email=?', (email,))[0]['userid'])
+    saved_items = query_db('SELECT * FROM saved_items WHERE userid=?', (userid,))
+    schema = ItemSchema(many=True)
+    items_dict = schema.dump(saved_items)
+    context["items"] = items_dict.data
     return flask.make_response(flask.jsonify(**context), 200)
 
 
 @app.route('/saved_items/add/', methods=["POST"])
 def add_saved_item():
+    '''
+    Request json should have: {
+        'email': email
+        'item': {see below}
+    }
+    Item to add should have the following data:
+        title
+        image_url
+        product_url
+        price
+        itemID
+    '''
     context = {}
     return flask.make_response(flask.jsonify(**context), 201)
 
@@ -61,7 +87,7 @@ def return_product_details():
     return flask.make_response(flask.jsonify(**context), 200)
 
 @app.route('/search/', methods=["POST"])
-def search(): 
+def search():
     """
     - Gets keywords associated with the image
     - Uses amazon's search engine to get the item details
@@ -76,7 +102,7 @@ def search():
     # 1. Add it to history of searches
     userids_with_email = query_db(
         '''SELECT userid FROM Users WHERE email = ?''', (request.json['email'],))
-    userid = userids_with_email[0] 
+    userid = userids_with_email[0]
 
     # TODO: Uncomment this section below and fix why the schema cannot handle request.json['image']
     # query_db(
@@ -88,7 +114,7 @@ def search():
 
     # I get the image in the format of base64 encoding
     # image is hardcoded for now but in the future will come from the client(request.json['image'])
-    
+
     data = {
         "requests":[
             {
@@ -125,12 +151,12 @@ def search():
 
     # 3. Uses amazon's search engine to get the item details
     amazon = bottlenose.Amazon(
-            cred.Amazon.ACCESS_KEY, 
-            cred.Amazon.SECRET_KEY, 
+            cred.Amazon.ACCESS_KEY,
+            cred.Amazon.SECRET_KEY,
             cred.Amazon.ASSOCIATE_ID,
             Parser=lambda text: BeautifulSoup(text, 'xml'))
     res = amazon.ItemSearch(
-            Keywords= " ".join(keywords), 
+            Keywords= " ".join(keywords),
             ResponseGroup="Images,ItemAttributes",
             SearchIndex="Fashion")
 
@@ -158,16 +184,16 @@ def search():
     items_dict = schema.dump(items)
     context["items"] = items_dict.data
     return flask.make_response(flask.jsonify(**context), 201)
-    
+
 
 @app.route('/user/add/', methods=["POST"])
 def create_user():
     context = {}
 
     # Check if the submitted post request has both the 'email' and 'password' field
-    if not request.json or not 'email' in request.json or not 'password' in request.json: 
+    if not request.json or not 'email' in request.json or not 'password' in request.json:
         abort(400)
-    
+
     # Check if the user already exists and if so respond accordingly
     user = query_db(
         '''

@@ -23,7 +23,11 @@ def hello_world():
 @app.route('/saved_items/', methods=["POST"])
 def get_saved_item():
     """
-    Returns a list of items
+    Returns a list of items that the user has saved
+
+    Request json should have: {
+        'email': email
+    }
 
     Changed to POST request since it doesn't seem like we're using session data.
     Assume post request has email passed in.
@@ -46,6 +50,8 @@ def get_saved_item():
 @app.route('/saved_items/add/', methods=["POST"])
 def add_saved_item():
     '''
+    Add an item to the user's saved items list
+
     Request json should have: {
         'email': email
         'item': {see below}
@@ -63,12 +69,27 @@ def add_saved_item():
 
 @app.route('/saved_items/delete/', methods=["POST"])
 def delete_saved_item():
+    '''
+    Delete an item from the user's saved items list
+
+    Request json should have: {
+        'email': email
+        'itemID': int
+    }
+
+    Entire item object is not required
+    '''
     context = {}
     return flask.make_response(flask.jsonify(**context), 201)
 
 
 @app.route('/export_saved/', methods=["POST"])
 def export_saved():
+    '''
+    Request json should have: {
+        'email': email
+    }
+    '''
     context = {}
     return flask.make_response(flask.jsonify(**context), 201)
 

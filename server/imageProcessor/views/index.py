@@ -68,8 +68,7 @@ def search():
 
     # 1. Add it to history of searches
     userids_with_email = query_db(
-        '''
-        SELECT userid FROM Users WHERE email = ?''', (request.json['email'],))
+        '''SELECT userid FROM Users WHERE email = ?''', (request.json['email'],))
     userid = userids_with_email[0] 
 
     # TODO: Uncomment this section below and fix why the schema cannot handle request.json['image']

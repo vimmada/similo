@@ -22,8 +22,10 @@ def hello_world():
 
 @app.route('/saved_items/', methods=["GET"])
 def get_saved_item():
+    """
+    Returns a list of items
+    """
     context = {}
-    context["hello"] = "cody"
     return flask.make_response(flask.jsonify(**context), 200)
 
 
@@ -47,21 +49,26 @@ def export_saved():
 
 @app.route('/history/', methods=["GET"])
 def get_history():
+    """
+    Returns list of search history
+    """
     context = {}
     return flask.make_response(flask.jsonify(**context), 200)
-
 
 @app.route('/item/', methods=["GET"])
 def return_product_details():
     context = {}
     return flask.make_response(flask.jsonify(**context), 200)
 
-# 1. Add it to history of searches
-# 2. Gets keywords associated with the image
-# 3. Uses amazon's search engine to get the item details
-# 4. Returns json of items(item_name, description, price, and link)
 @app.route('/search/', methods=["POST"])
 def search(): 
+    """
+    - Gets keywords associated with the image
+    - Uses amazon's search engine to get the item details
+    - Add image to history of searches
+    - Purge user search history of > KEEP_HISTORY most recent items
+    - Returns json of items(item_name, description, price, and link)
+    """
     context = {}
     if not request.json or not "image" in request.json:
         abort(400)
@@ -146,7 +153,7 @@ def search():
             price = int(item.find("Amount").text)
         items.append(Item(title, image_url, product_url, price))
 
-    # 4 returns json of items(title, image_url, product_url, price)
+    # Returns json of items(title, image_url, product_url, price)
     schema = ItemSchema(many=True)
     items_dict = schema.dump(items)
     context["items"] = items_dict.data
@@ -180,6 +187,3 @@ def create_user():
     context['email'] = request.json['email']
 
     return flask.make_response(flask.jsonify(**context), 201)
-
-
-

@@ -13,6 +13,7 @@ class Item:
         self.image_url = image_url
         self.product_url = product_url
         self.price = price
+        self.itemID = None
 
 class ItemSchema(Schema):
     title = fields.String()

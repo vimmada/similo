@@ -39,12 +39,16 @@ def get_saved_item():
         'email': email,
         'items': []
     }
-    userid = int(query_db('SELECT userid FROM users WHERE email=?', (email,))[0]['userid'])
-    saved_items = query_db('SELECT * FROM saved_items WHERE userid=?', (userid,))
-    schema = ItemSchema(many=True)
-    items_dict = schema.dump(saved_items)
-    context["items"] = items_dict.data
-    return flask.make_response(flask.jsonify(**context), 200)
+    try:
+        userid = int(query_db('SELECT userid FROM users WHERE email=?', (email,))[0]['userid'])
+        saved_items = query_db('SELECT * FROM saved_items WHERE userid=?', (userid,))
+        schema = ItemSchema(many=True)
+        items_dict = schema.dump(saved_items)
+        context["items"] = items_dict.data
+        return flask.make_response(flask.jsonify(**context), 200)
+    except IndexError:
+        print("user does not exist")
+        abort(400)
 
 
 @app.route('/saved_items/add/', methods=["POST"])
@@ -53,6 +57,8 @@ def add_saved_item():
     '''
     Add an item to the user's saved items list and sends item back with
     newly generated itemID.
+
+    Product url is the unique identifier
 
     Request json should have: {
         'email': email
@@ -69,24 +75,48 @@ def add_saved_item():
         abort(400)
 
     email = request.json['email']
-    userid = int(query_db('SELECT userid FROM users WHERE email=?', (email,))[0]['userid'])
-    item = request.json['item']
-    context = {
-        'email': email,
-        'item': item
-    }
-    # TODO: empty description for now 'fill in'. Change db schema or itemschema
-    query_db('''
-             INSERT INTO saved_items (title, description, price, product_url, image_url, userid)
-             VALUES (?, ?, ?, ?, ?, ?)
-             ''',
-             (item['title'], 'fill in', item['price'], item['product_url'], item['image_url'], userid))
+    try:
+        userid = int(query_db('SELECT userid FROM users WHERE email=?', (email,))[0]['userid'])
+        item = request.json['item']
+        context = {
+            'email': email,
+            'item': item,
+            'itemID_list': []  # Other rows in saved_items table that may have been modified
+                               # (should only have 1)
+        }
 
-    # Update item about to be returned with generated itemID
-    itemID = int(query_db('SELECT last_insert_rowid()')[0]['last_insert_rowid()'])
-    context['item']['itemID'] = itemID
+        product_url_exists = query_db('SELECT itemid FROM saved_items WHERE product_url=? AND userid=?',
+                                      (item['product_url'], userid))
 
-    return flask.make_response(flask.jsonify(**context), 201)
+        # Update item about to be returned with generated itemID
+        itemID = None
+        # TODO: empty description for now 'fill in'. Change db schema or itemschema
+        if product_url_exists:
+            query_db('''
+                     UPDATE saved_items
+                     SET title=?, description=?, price=?, image_url=?
+                     WHERE product_url=? AND userid=?
+                     ''',
+                     (item['title'], 'fill in', item['price'], item['image_url'],
+                      item['product_url'], userid))
+            itemID = int(product_url_exists[0]['itemid'])
+            context['itemID_list'] = [q['itemid'] for q in product_url_exists]
+        else:
+            query_db('''
+                    INSERT INTO saved_items (title, description, price, product_url, image_url, userid)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                    ''',
+                    (item['title'], 'fill in', item['price'], item['product_url'], item['image_url'], userid))
+            itemID = int(query_db('SELECT last_insert_rowid()')[0]['last_insert_rowid()'])
+            context['itemID_list'] = [itemID]
+
+        context['item']['itemID'] = itemID
+
+        return flask.make_response(flask.jsonify(**context), 201)
+    except IndexError:
+        print("user does not exist")
+        abort(400)
+
 
 
 @app.route('/saved_items/delete/', methods=["POST"])

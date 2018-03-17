@@ -7,6 +7,7 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
+import { ListItem } from 'react-native-elements';
 
 export default class RecommendationsScreen extends Component {
   constructor(props) {
@@ -34,6 +35,12 @@ export default class RecommendationsScreen extends Component {
           <Text style={{ color: "black" }}>${item['price']}</Text>
         </TouchableOpacity>
       </View>
+      <ListItem
+        key={sectionID}
+        title={item['title']}
+        subtitle={item['price']}
+        avatar={{uri:item['']}}
+      />
     );
   };
 

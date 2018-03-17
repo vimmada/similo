@@ -4,6 +4,7 @@ import { StackNavigator } from 'react-navigation';
 
 import AdvancedSearchScreen from '../containers/AdvancedSearchScreen';
 import BufferScreen from '../containers/BufferScreen';
+import ExportScreen from '../containers/ExportScreen';
 import FilterScreen from '../containers/FilterScreen';
 import HomeScreen from '../containers/HomeScreen';
 import HistoryScreen from '../containers/HistoryScreen';
@@ -19,6 +20,9 @@ const RootNavigator = StackNavigator(
     },
     Buffer: {
       screen: BufferScreen,
+    },
+    Export: {
+      screen: ExportScreen,
     },
     Filter: {
       screen: FilterScreen,

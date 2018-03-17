@@ -131,8 +131,22 @@ def delete_saved_item():
 
     Entire item object is not required
     '''
-    context = {}
-    return flask.make_response(flask.jsonify(**context), 201)
+    if not request.json or 'email' not in request.json or 'itemID' not in request.json:
+        abort(400)
+    email = request.json['email']
+    try:
+        userid = int(query_db('SELECT userid FROM users WHERE email=?', (email,))[0]['userid'])
+        itemid = request.json['itemID']
+        context = {
+            'email': email,
+            'itemID': itemid
+        }
+        query_db('DELETE FROM saved_items WHERE itemid=? and userid=?', (itemid, userid))
+        return flask.make_response(flask.jsonify(**context), 201)
+    except IndexError:
+        print("user does not exist")
+        abort(400)
+
 
 
 @app.route('/export_saved/', methods=["POST"])
@@ -148,7 +162,7 @@ def export_saved():
 
 @app.route('/history/', methods=["GET"])
 def get_history():
-    
+
     if not request.json or 'email' not in request.json:
         abort(400)
     email = request.json['email']

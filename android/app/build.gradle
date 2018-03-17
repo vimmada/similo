@@ -108,6 +108,7 @@ android {
         }
         renderscriptTargetApi 23
         renderscriptSupportModeEnabled true
+        vectorDrawables.useSupportLibrary = true
     }
     splits {
         abi {
@@ -139,8 +140,7 @@ android {
 }
 
 dependencies {
-    compile project(':react-native-vector-icons')
-    compile project(':react-native-blur')
+    compile project(':react-native-image-crop-picker')
     compile project(':react-native-blur')
     compile project(':react-native-camera')
     compile project(':react-native-vector-icons')

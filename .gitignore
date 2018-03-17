@@ -305,5 +305,7 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
+# SQLite3
+*.sqlite3
 
 # End of https://www.gitignore.io/api/reactnative

@@ -148,11 +148,24 @@ def export_saved():
 
 @app.route('/history/', methods=["GET"])
 def get_history():
-    """
-    Returns list of search history
-    """
-    context = {}
-    return flask.make_response(flask.jsonify(**context), 200)
+    
+    if not request.json or 'email' not in request.json:
+        abort(400)
+    email = request.json['email']
+    context = {
+        'email': email,
+        'items': []
+    }
+    try:
+        userid = int(query_db('SELECT userid FROM users WHERE email=?', (email,))[0]['userid'])
+        history = query_db('SELECT * FROM search_history WHERE userid=?', (userid,))
+        schema = ItemSchema(many=True)
+        items_dict = schema.dump(history)
+        context["items"] = items_dict.data
+        return flask.make_response(flask.jsonify(**context), 200)
+    except IndexError:
+        print("user does not exist")
+        abort(400)
 
 @app.route('/item/', methods=["GET"])
 def return_product_details():

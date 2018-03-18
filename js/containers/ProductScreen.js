@@ -28,11 +28,22 @@ export default class ProductScreen extends Component {
     const name = params ? params.name : null;
     const price = params ? params.price : null;
     const url = params ? params.url : null;
+    const picture = params ? params.picture : null;
+
+    var pnum = price.toString();
+    var dollar = pnum.substring(0, pnum.length - 2);
+    var cents = pnum.substring(pnum.length-2, pnum.length);
+    var Price = "$" + dollar + "." + cents;
+    
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text> {JSON.stringify(name)} </Text>
-        <Text> Link: {JSON.stringify(url)} </Text>
-        <Text> ${JSON.stringify(price)} </Text>
+        <Image
+          style={{width: 50, height: 50}}
+          source={{uri: {picture}}}
+        />
+        <Text> {name} </Text>
+        <Text> Link: {url} </Text>
+        <Text> ${Price} </Text>
         <Button
           title={this.state.btext}
           onPress={() => { this.saveItem() }}

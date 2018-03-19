@@ -14,7 +14,7 @@ const photoOptions = {
 };
 
 function uploadPhoto(photo) {
-  this.props.navigation.navigate('Buffer', { photo });
+  this.props.navigation.navigate('Recommendations', { photo });
 
   // return fetch(API_ENDPOINT_SEARCH, {
   //   method: 'POST',

@@ -10,6 +10,7 @@ import bottlenose
 import pdb
 import base64
 from bs4 import BeautifulSoup
+import re
 
 from imageProcessor.model import db
 from imageProcessor.models import Item, ItemSchema, SavedItem, User, SearchLog, SearchLogSchema
@@ -17,6 +18,23 @@ from imageProcessor.auth import token_required
 from common import cred, constants, util 
 
 api = Blueprint('views', __name__, url_prefix="/api")
+
+def get_words():
+    words = set()
+    with open('imageProcessor/views/clothing_words.txt', 'r') as infile:
+        for word in infile:
+            word = word.lower()
+            words.add(word.strip())
+    #print(words)
+    return words
+
+def get_companies():
+    companies = set()
+    with open('imageProcessor/views/companies.txt', 'r') as infile:
+        for word in infile:
+            word = word.lower()
+            companies.add(word.strip())
+    return companies
 
 @api.route('/')
 def hello_world():
@@ -127,6 +145,8 @@ def get_history(current_user):
     return make_response(jsonify(**context), 200)
 
 
+CLOTHING_WORDS = get_words()
+COMPANIES = get_companies()
 @api.route('/search/', methods=["POST"])
 @token_required
 def search(current_user):
@@ -136,6 +156,12 @@ def search(current_user):
     - Add image to history of searches
     - Purge user search history of > KEEP_HISTORY most recent items
     - Returns json of items(item_name, description, price, and link)
+    """
+    """
+    Request JSON should have: {
+        'email': email
+        'image': base64 encoding of the image
+    }
     """
     context = {}
     if not request.json or not "image" in request.json:
@@ -158,12 +184,12 @@ def search(current_user):
         "requests":[
             {
             "image":{
-                "content": constants.image
+                "content": constants.image # TODO: Replace with request.json['image']
             },
             "features":[
                 {
                 "type":"LABEL_DETECTION",
-                "maxResults":10 # change this number to get more labels
+                "maxResults":8 # change this number to get more labels
                 },
                 {
                 "type":"LOGO_DETECTION",
@@ -174,6 +200,9 @@ def search(current_user):
                 },
                 {
                 "type": "IMAGE_PROPERTIES"
+                },
+                {
+                "type": "TEXT_DETECTION"
                 }
             ]
             }
@@ -183,6 +212,35 @@ def search(current_user):
     results = requests.post(url=('https://vision.googleapis.com/v1/images:annotate?key=' + cred.Google.API_KEY), data=data)
     results = results.json()
     labels = results['responses'][0]['labelAnnotations']
+    web_entities = results['responses'][0]['webDetection']['webEntities']
+    search_terms = []
+    for label in labels:
+        description = label['description'].split(' ')
+        for word in description:
+            if word.lower() in CLOTHING_WORDS:
+                if word.lower() not in search_terms:
+                    search_terms.append(word.lower())
+        if (label['description']).lower() in COMPANIES:
+            search_terms.insert(0, label['description'].lower())
+        
+    count = 0
+    for entity in web_entities:
+        if count > 7:
+            break
+        description = entity['description'].split(' ')
+        for word in description:
+            if word.lower() in CLOTHING_WORDS:
+                if word.lower() not in search_terms:
+                    search_terms.append(word.lower())
+        if (entity['description']).lower() in COMPANIES:
+            search_terms.insert(0, entity['description'].lower())
+        count = count + 1
+    
+    if 'logoAnnotations' in results['responses'][0]:
+        logo = results['responses'][0]['logoAnnotations'][0]['description']
+        search_terms.insert(0, logo)
+    
+    print(search_terms)
 
     # TODO: Filter keywords for clothing items only
     # keywords = [label.get("description") for label in labels]

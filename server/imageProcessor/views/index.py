@@ -277,7 +277,7 @@ def search(current_user):
     context["items"] = items_dict.data
     return make_response(jsonify(**context), 201)
 
-@api.route('/login', methods=["POST"])
+@api.route('/login/', methods=["POST"])
 def login():
     """
     Logs a user in, and returns a json web token for future authenticated requests
@@ -309,14 +309,14 @@ def login():
     return make_response(jsonify(**context), 200)
 
 
-@api.route('/logout', methods=["POST"])
+@api.route('/logout/', methods=["POST"])
 @token_required
 def logout(current_user):
     # TODO: Invalidate token somehow
     return make_response("Logged out", 200)
 
 
-@api.route('/users', methods=["POST"])
+@api.route('/users/', methods=["POST"])
 def create_user():
     """
     Creates a user and returns a jwt for future authenticated requests

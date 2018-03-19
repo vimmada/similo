@@ -156,8 +156,7 @@ def search(current_user):
     - Add image to history of searches
     - Purge user search history of > KEEP_HISTORY most recent items
     - Returns json of items(item_name, description, price, and link)
-    """
-    """
+
     Request JSON should have: {
         'email': email
         'image': base64 encoding of the image
@@ -167,24 +166,20 @@ def search(current_user):
     if not request.json or not "image" in request.json:
         abort(400)
 
-    image = base64.b64decode(request.json['image'])
+    image = request.json['image']
     # 1. Add it to history of searches
-    search = SearchLog(image=image,
+    search = SearchLog(image=base64.b64decode(image),
                        date_created=datetime.datetime.now(),
                        user_id=current_user.user_id)
     db.session.add(search)
     db.session.commit()
     
     # 2. Gets keywords associated with the image
-
-    # I get the image in the format of base64 encoding
-    # image is hardcoded for now but in the future will come from the client(request.json['image'])
-
     data = {
         "requests":[
             {
             "image":{
-                "content": constants.image # TODO: Replace with request.json['image']
+                "content": image
             },
             "features":[
                 {

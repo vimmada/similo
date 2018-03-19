@@ -39,7 +39,7 @@ export default class ProductScreen extends Component {
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <Image
           style={{width: 50, height: 50}}
-          source={{uri: {picture}}}
+          source={{uri: picture}}
         />
         <Text> {name} </Text>
         <Text> Link: {url} </Text>

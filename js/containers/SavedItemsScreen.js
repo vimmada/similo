@@ -44,7 +44,7 @@ export default class SavedItemsScreen extends Component {
         <TouchableOpacity onPress={() => this.selectItem(item)}>
           <Image
             style={{width: 50, height: 50}}
-            source={{uri: {item['picture']}}}
+            source={{uri: item['picture']}}
           />
           <Text style={{ color: "black" }}>{item['title']}</Text>
           <Text style={{ color: "black" }}>{price}</Text>
@@ -61,14 +61,16 @@ export default class SavedItemsScreen extends Component {
       {"key": 'j', "image_url": 'https://images-na.ssl-images-amazon.com/images/I/71p0O0O-YVL._UX522_.jpg', "title": 'Glasses9', "price": 10000, "product_url": "https://www.amazon.com"},
     ];
     return (
-      <Button>
-        title="Export Saved Items"
-        onPress={() => { this.export(data) }}
-      </Button>
-      <FlatList
-        data={data}
-        renderItem={this._renderItem}
-      />
+      <View>
+        <Button>
+          title="Export Saved Items"
+          onPress={() => { this.export(data) }}
+        </Button>
+        <FlatList
+          data={data}
+          renderItem={this._renderItem}
+        />
+      </View>
     );
   }
 }

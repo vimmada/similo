@@ -8,6 +8,7 @@ import datetime
 import json
 import bottlenose
 import pdb
+import base64
 from bs4 import BeautifulSoup
 
 from imageProcessor.model import db
@@ -122,7 +123,7 @@ def get_history(current_user):
     context = {}
     search_history = current_user.prev_searches
     schema = SearchLogSchema(many=True)
-    context["history"] = schema.dump(search_history)
+    context["history"] = schema.dump(search_history).data
     return make_response(jsonify(**context), 200)
 
 
@@ -140,9 +141,10 @@ def search(current_user):
     if not request.json or not "image" in request.json:
         abort(400)
 
+    image = base64.b64decode(request.json['image'])
     # 1. Add it to history of searches
-    search = SearchLog(image=request.json['image'],
-                       searched=datetime.datetime.now(), 
+    search = SearchLog(image=image,
+                       date_created=datetime.datetime.now(),
                        user_id=current_user.user_id)
     db.session.add(search)
     db.session.commit()

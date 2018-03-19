@@ -14,21 +14,29 @@ const photoOptions = {
 };
 
 function uploadPhoto(photo) {
-  this.props.navigation.navigate('Recommendations', { photo });
+  this.props.navigation.navigate('Buffer', { photo });
 
-  // return fetch(API_ENDPOINT_SEARCH, {
-  //   method: 'POST',
-  //   body: JSON.stringify({
-  //       email: TEST_EMAIL,
-  //       image: photo.data, // base64 representation
-  //   }),
-  //   headers: {
-  //     'Content-Type': 'application/json',
-  //   }
-  // })
-  //   .then(res => res.json())
-  //   .then(data => data.items)
-  //   .catch(e => console.error(e));
+   return fetch(API_ENDPOINT_SEARCH, {
+     method: 'POST',
+     body: JSON.stringify({
+         email: TEST_EMAIL,
+         image: photo.data, // base64 representation
+     }),
+     headers: {
+       'Content-Type': 'application/json',
+     }
+   })
+     .then((res) => {
+       return res.json();
+     })
+     .then((data) => {
+        return data.items;
+      })
+     // navigate to RecommendationsScreen
+     .then((recomm) => {
+        this.props.navigation.navigate('Recommendations', { recomm });
+      })
+     .catch(e => console.error(e));
 }
 
 export function selectPhotoFromGallery() {

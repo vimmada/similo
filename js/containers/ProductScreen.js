@@ -34,16 +34,16 @@ export default class ProductScreen extends Component {
     var dollar = pnum.substring(0, pnum.length - 2);
     var cents = pnum.substring(pnum.length-2, pnum.length);
     var Price = "$" + dollar + "." + cents;
-    
+
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <Image
-          style={{width: 50, height: 50}}
+          style={{width: 200, height: 200}}
           source={{uri: picture}}
         />
         <Text> {name} </Text>
         <Text> Link: {url} </Text>
-        <Text> ${Price} </Text>
+        <Text> {Price} </Text>
         <Button
           title={this.state.btext}
           onPress={() => { this.saveItem() }}

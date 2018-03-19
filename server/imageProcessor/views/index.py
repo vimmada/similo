@@ -253,14 +253,14 @@ def login():
     context = {}
     context['username'] = user.username
     context['token'] = token.decode('UTF-8')
-    return make_response(jsonify(**context), 201)
+    return make_response(jsonify(**context), 200)
 
 
 @api.route('/logout', methods=["POST"])
 @token_required
 def logout(current_user):
     # TODO: Invalidate token somehow
-    return make_response("Logged out", 201)
+    return make_response("Logged out", 200)
 
 
 @api.route('/users', methods=["POST"])

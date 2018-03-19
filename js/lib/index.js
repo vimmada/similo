@@ -1,16 +1,14 @@
-'use strict';
-
 import ImagePicker from 'react-native-image-crop-picker';
 
 import { API_ENDPOINT_SEARCH, TEST_EMAIL, CROP_WIDTH, CROP_HEIGHT } from '../config/constants';
 
 const photoOptions = {
-    cropping: true,
-    width: CROP_WIDTH,
-    height: CROP_HEIGHT,
-    cropperToolbarTitle: 'Crop Photo',
-    includeBase64: true,
-    mediaType: 'photo',
+  cropping: true,
+  width: CROP_WIDTH,
+  height: CROP_HEIGHT,
+  cropperToolbarTitle: 'Crop Photo',
+  includeBase64: true,
+  mediaType: 'photo',
 };
 
 function uploadPhoto(photo) {
@@ -42,11 +40,11 @@ function uploadPhoto(photo) {
 export function selectPhotoFromGallery() {
   return ImagePicker.openPicker(photoOptions)
     .then(photo => uploadPhoto.call(this, photo))
-    .catch(e => {});
+    .catch(() => {});
 }
 
 export function takePhotoWithCamera() {
   return ImagePicker.openCamera(photoOptions)
     .then(photo => uploadPhoto.call(this, photo))
-    .catch(e => {});
+    .catch(() => {});
 }

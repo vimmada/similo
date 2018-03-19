@@ -1,7 +1,16 @@
+import { View } from 'react-native';
 import React, { Component } from 'react';
 
-export default class SettingsScreen extends Component {
+export default class AuthScreen extends Component {
+  static navigationOptions = {
+    title: 'Settings',
+  };
+
   render() {
-    throw Error('Not implemented!');
+    return (
+      <View>
+      </View>
+    );
   }
 }
+

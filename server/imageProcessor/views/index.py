@@ -206,7 +206,6 @@ def search(current_user):
     data = json.dumps(data)
     results = requests.post(url=('https://vision.googleapis.com/v1/images:annotate?key=' + cred.Google.API_KEY), data=data)
     results = results.json()
-    print(results)
     labels = results['responses'][0]['labelAnnotations']
     web_entities = results['responses'][0]['webDetection']['webEntities']
     search_terms = []
@@ -235,13 +234,9 @@ def search(current_user):
     if 'logoAnnotations' in results['responses'][0]:
         logo = results['responses'][0]['logoAnnotations'][0]['description']
         search_terms.insert(0, logo)
+
+    keywords = search_terms
     
-    print(search_terms)
-
-    # TODO: Filter keywords for clothing items only
-    # keywords = [label.get("description") for label in labels]
-    keywords = ["blue", "jeans"]
-
     # 3. Uses amazon's search engine to get the item details
     amazon = bottlenose.Amazon(
             cred.Amazon.ACCESS_KEY,

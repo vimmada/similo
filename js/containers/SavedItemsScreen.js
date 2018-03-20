@@ -26,19 +26,14 @@ export default class SavedItemsScreen extends Component {
   }
 
   componentDidMount() {
-    fetch(API_SAVED_ITEMS, {
-      method: 'POST',
-      header: 'Content-Type: application/json',
-      credentials: 'same-origin',
-      body: JSON.stringify({
-        email: TEST_EMAIL,
-      })
-    })
+    fetch(API_SAVED_ITEMS, { credentials: 'same-origin' })
     .then((response) => {
       return response.json()
     })
     .then((data) => {
-      this.
+      this.setState({
+        data: data.items,
+      });
     })
     .catch(e => console.error(e));
   }

@@ -5,7 +5,7 @@ import {
   Text,
   Button,
 } from 'react-native';
-import { API_ADD_SAVED, TEST_EMAIL } from '../config/constants';
+import { API_SAVED_ITEMS, TEST_EMAIL } from '../config/constants';
 
 
 export default class ProductScreen extends Component {
@@ -28,7 +28,7 @@ export default class ProductScreen extends Component {
     const price = params ? params.price : null;
     const url = params ? params.url : null;
     const picture = params ? params.picture : null;
-    fetch(API_ADD_SAVED, {
+    fetch(API_SAVED_ITEMS, {
       method: 'POST',
       header: 'Content-Type: application/json',
       credentials: 'same-origin',

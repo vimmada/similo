@@ -23,14 +23,16 @@ Similo is for fashion enthusiasts looking to draw inspiration from others’ out
 
 ## Running The Backend Server
 In __another__ terminal:
-    cd $SIMILO/server
-    virtualenv venv
-    source venv/bin/activate
-    pip install -e .
-    pip install -r requirements.txt
-    chmod +x ./bin/image-processorrun
-    mkdir -p var
-    ./bin/image-processorrun
+```
+cd $SIMILO/server
+virtualenv venv
+source venv/bin/activate
+pip install -e .
+pip install -r requirements.txt
+chmod +x ./bin/image-processorrun
+mkdir -p var
+./bin/image-processorrun
+```
 
 To test, navigate to localhost:8000/api/, which should say "Hello, World!"
 

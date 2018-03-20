@@ -4,6 +4,7 @@ Similo is for fashion enthusiasts looking to draw inspiration from others’ out
 ## Notes
 - `js/` contains frontend components; `server/` contains backend components
 - To add a photo to an iOS/Android simulator's photo gallery, open the photo gallery and just drag the photo in.
+- **Use Python 3!**
 
 ## Getting started
 1. `git clone https://github.com/perryjiang/similo.git`

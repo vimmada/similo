@@ -5,6 +5,8 @@ import {
   Text,
   Button,
 } from 'react-native';
+import { API_ADD_SAVED, TEST_EMAIL } from '../config/constants';
+
 
 export default class ProductScreen extends Component {
   constructor(props) {
@@ -21,6 +23,25 @@ export default class ProductScreen extends Component {
       saved: true,
       btext: 'Item Saved',
     });
+    const { params } = this.props.navigation.state;
+    const name = params ? params.name : null;
+    const price = params ? params.price : null;
+    const url = params ? params.url : null;
+    const picture = params ? params.picture : null;
+    fetch(API_ADD_SAVED, {
+      method: 'POST',
+      header: 'Content-Type: application/json',
+      credentials: 'same-origin',
+      body: JSON.stringify({
+        email: TEST_EMAIL,
+        item: {
+          title: name,
+          image_url: picture,
+          product_url: url,
+          price: price,
+        },})
+      }
+    })
   }
 
   render() {

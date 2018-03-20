@@ -8,6 +8,8 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { ListItem } from 'react-native-elements';
+import { API_SAVED_ITEMS, TEST_EMAIL } from '../config/constants';
+
 
 export default class SavedItemsScreen extends Component {
   constructor(props) {
@@ -18,6 +20,25 @@ export default class SavedItemsScreen extends Component {
 
     this.props.navigation.setParams({ selectItem: this.selectItem });
 
+  }
+
+  componentDidMount() {
+    fetch(API_SAVED_ITEMS, {
+      method: 'POST',
+      header: 'Content-Type: application/json',
+      credentials: 'same-origin',
+      body: JSON.stringify({
+        email: TEST_EMAIL,
+        item: {
+          title
+        }
+      })
+    })
+    .then((response) => {
+      return response.json()
+    })
+    .then((data))
+    .catch(e => console.error(e));
   }
 
   selectItem(item) {
@@ -50,7 +71,7 @@ export default class SavedItemsScreen extends Component {
       />
     );
   );
-  
+
   render() {
     const data = [
       {

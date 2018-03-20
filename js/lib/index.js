@@ -1,6 +1,6 @@
 import ImagePicker from 'react-native-image-crop-picker';
 
-import { API_ENDPOINT_SEARCH, TEST_EMAIL, CROP_WIDTH, CROP_HEIGHT } from '../config/constants';
+import { API_ENDPOINT_SEARCH, TEST_EMAIL, CROP_WIDTH, CROP_HEIGHT, } from '../config/constants';
 
 const photoOptions = {
   cropping: true,
@@ -20,7 +20,7 @@ function uploadPhoto(photo) {
          email: TEST_EMAIL,
          image: photo.data, // base64 representation
      }),
-     headers: {
+     header: {
        'Content-Type': 'application/json',
      }
    })

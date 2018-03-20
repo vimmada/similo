@@ -206,30 +206,33 @@ def search(current_user):
     data = json.dumps(data)
     results = requests.post(url=('https://vision.googleapis.com/v1/images:annotate?key=' + cred.Google.API_KEY), data=data)
     results = results.json()
+    print(results)
     labels = results['responses'][0]['labelAnnotations']
     web_entities = results['responses'][0]['webDetection']['webEntities']
     search_terms = []
     for label in labels:
-        description = label['description'].split(' ')
-        for word in description:
-            if word.lower() in CLOTHING_WORDS:
-                if word.lower() not in search_terms:
-                    search_terms.append(word.lower())
-        if (label['description']).lower() in COMPANIES:
-            search_terms.insert(0, label['description'].lower())
+        if "description" in label:
+            description = label['description'].split(' ')
+            for word in description:
+                if word.lower() in CLOTHING_WORDS:
+                    if word.lower() not in search_terms:
+                        search_terms.append(word.lower())
+            if (label['description']).lower() in COMPANIES:
+                search_terms.insert(0, label['description'].lower())
         
     count = 0
     for entity in web_entities:
         if count > 7:
             break
-        description = entity['description'].split(' ')
-        for word in description:
-            if word.lower() in CLOTHING_WORDS:
-                if word.lower() not in search_terms:
-                    search_terms.append(word.lower())
-        if (entity['description']).lower() in COMPANIES:
-            search_terms.insert(0, entity['description'].lower())
-        count = count + 1
+        if 'description' in entity:
+            description = entity['description'].split(' ')
+            for word in description:
+                if word.lower() in CLOTHING_WORDS:
+                    if word.lower() not in search_terms:
+                        search_terms.append(word.lower())
+            if (entity['description']).lower() in COMPANIES:
+                search_terms.insert(0, entity['description'].lower())
+            count = count + 1
     
     if 'logoAnnotations' in results['responses'][0]:
         logo = results['responses'][0]['logoAnnotations'][0]['description']

@@ -3,7 +3,6 @@ Similo is for fashion enthusiasts looking to draw inspiration from others’ out
 
 ## Notes
 - `js/` contains frontend components; `server/` contains backend components
-- Currently we are having issues using the [react-native-camera](https://github.com/react-native-community/react-native-camera) module, so we can only upload photos from the photo gallery.
 - To add a photo to an iOS/Android simulator's photo gallery, open the photo gallery and just drag the photo in.
 - Currently an image is hard-coded into the backend.
 

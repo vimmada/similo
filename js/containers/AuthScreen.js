@@ -21,6 +21,8 @@ export default class AuthScreen extends Component {
     super(props);
 
     this.state = { username: '', password: '', statusMsg: '' };
+
+    this.authAsync = this.authAsync.bind(this);
   }
 
   authAsync = async () => {
@@ -57,7 +59,8 @@ export default class AuthScreen extends Component {
           onChangeText={password => this.setState({ password })}
         />
         <Text style={{ marginBottom: 20, color: 'red' }}>{ this.state.statusMsg }</Text>
-        <Button title="Sign in" onPress={this.authAsync} />
+        <Button title="Sign in" onPress={this.authAsync.bind(this)} />
+        <Button title="Create Account" onPress={() => this.props.navigation.navigate('CreateAccount')} />
       </View>
     );
   }

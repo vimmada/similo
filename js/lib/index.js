@@ -1,7 +1,7 @@
 import { AsyncStorage } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 
-import { API_ENDPOINT_AUTH, API_ENDPOINT_SEARCH, TEST_EMAIL, CROP_WIDTH, CROP_HEIGHT } from '../config/constants';
+import { API_ENDPOINT_AUTH, API_ENDPOINT_SEARCH, API_ENDPOINT_USERS, TEST_EMAIL, CROP_WIDTH, CROP_HEIGHT } from '../config/constants';
 
 const photoOptions = {
   cropping: true,
@@ -66,4 +66,20 @@ export async function login(username, password) {
 export async function logout() {
   await AsyncStorage.clear();
   this.props.navigation.navigate('Auth');
+}
+
+export function createAccount({ username, email, password, firstname, lastname }) {
+  return fetch(API_ENDPOINT_USERS, {
+    method: 'POST',
+    body: JSON.stringify({
+      username,
+      email,
+      password,
+      firstname,
+      lastname,
+    }),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
 }

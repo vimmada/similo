@@ -18,7 +18,6 @@ CREATE TABLE saved_items (
 
 CREATE TABLE search_history (
   image BLOB NOT NULL,
-  userid INTEGER NOT NULL,
   searched TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
   FOREIGN KEY(userid) REFERENCES users(userid) ON DELETE CASCADE
 );

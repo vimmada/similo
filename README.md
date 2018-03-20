@@ -27,12 +27,12 @@ In __another__ terminal:
     virtualenv venv
     source venv/bin/activate
     pip install -e .
+    pip install -r requirements.txt
     chmod +x ./bin/image-processorrun
-    chmod +x ./bin/database
-    ./bin/database reset
+    mkdir -p var
     ./bin/image-processorrun
 
-To test, navigate to localhost:8000, which should say "Hello, World!"
+To test, navigate to localhost:8000/api/, which should say "Hello, World!"
 
 To view the api routes, go to ./imageProcessor/views/index.py.
 

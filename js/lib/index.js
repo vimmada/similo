@@ -15,7 +15,7 @@ const photoOptions = {
 async function uploadPhoto(photo) {
   this.props.navigation.navigate('Buffer', { photo });
 
-  userToken = await AsyncStorage.getItem('userToken');
+  const userToken = await AsyncStorage.getItem('userToken');
 
   return fetch(API_ENDPOINT_SEARCH, {
     method: 'POST',
@@ -30,7 +30,9 @@ async function uploadPhoto(photo) {
   })
     .then(res => res.json())
     .then(data => data.items)
-    .catch(() => {});
+    // navigate to RecommendationsScreen
+    .then(recomm => this.props.navigation.navigate('Recommendations', { data: recomm }))
+    .catch(e => console.error(e));
 }
 
 export function selectPhotoFromGallery() {
@@ -46,18 +48,18 @@ export function takePhotoWithCamera() {
 }
 
 export async function login(username, password) {
-  userToken = await AsyncStorage.getItem('userToken');
+  const userToken = await AsyncStorage.getItem('userToken');
 
   return fetch(API_ENDPOINT_AUTH, {
     method: 'POST',
     body: JSON.stringify({
-      username: username,
-      password: password,
+      username,
+      password,
     }),
     headers: {
       'Authorization': userToken,
       'Content-Type': 'application/json',
-    }
+    },
   });
 }
 

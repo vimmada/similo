@@ -13,9 +13,6 @@ Similo is for fashion enthusiasts looking to draw inspiration from others’ out
 3. `cd similo && yarn install` _or_ `cd similo && npm install`
 4. `react-native link`
 
-### iOS
-1. Open the project in Xcode, and using the Project Navigator, expand the RNCamera project and delete the FaceDetector folder. **The project will not compile on iOS without this step!**
-
 ## Building Similo
 1. `cd similo && react-native start`
 2. In another terminal, navigate to the project directory and run `npm run <ios/android>`.

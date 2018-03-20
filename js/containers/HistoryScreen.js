@@ -45,6 +45,8 @@ export default class HistoryScreen extends Component {
     });
   }
 
+  _keyExtractor = (item, index) => item.product_url;
+
   _renderItem = ({item}) => {
     var pnum = item['price'].toString();
     var dollar = pnum.substring(0, pnum.length - 2);
@@ -66,6 +68,7 @@ export default class HistoryScreen extends Component {
       <FlatList
         data={this.data}
         renderItem={this._renderItem}
+        keyExtractor={this._keyExtractor}
       />
     );
   }

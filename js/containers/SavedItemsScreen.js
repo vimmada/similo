@@ -54,6 +54,8 @@ export default class SavedItemsScreen extends Component {
     });
   }
 
+  _keyExtractor = (item, index) => item.product_url;
+
   _renderItem = ({item}) => {
     var pnum = item['price'].toString();
     var dollar = pnum.substring(0, pnum.length - 2);
@@ -81,6 +83,7 @@ export default class SavedItemsScreen extends Component {
         <FlatList
           data={data}
           renderItem={this._renderItem}
+          keyExtractor={this._keyExtractor}
         />
       </View>
     );

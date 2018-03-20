@@ -27,7 +27,7 @@ export default class AuthScreen extends Component {
 
   authAsync = async () => {
     login.bind(this)(this.state.username, this.state.password)
-      .then(res => res.json())
+      .then(res => { console.error(res.state); res.json() })
       .then(async (data) => {
         if (data.token) {
           await AsyncStorage.setItem('userToken', data.token);
@@ -36,7 +36,7 @@ export default class AuthScreen extends Component {
           this.setState({ username: '', password: '', statusMsg: 'Invalid credentials.' });
         }
       })
-      .catch(() => this.setState({ username: '', password: '', statusMsg: 'Invalid credentials.' }));
+      .catch(() => this.setState({ username: '', password: '', statusMsg: 'A network error occured.' }));
   }
 
   render() {

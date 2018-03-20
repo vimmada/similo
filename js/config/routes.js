@@ -11,7 +11,6 @@ import HistoryScreen from '../containers/HistoryScreen';
 import ProductScreen from '../containers/ProductScreen';
 import RecommendationsScreen from '../containers/RecommendationsScreen';
 import SavedItemsScreen from '../containers/SavedItemsScreen';
-import SettingsScreen from '../containers/SettingsScreen';
 
 const AppNavigator = StackNavigator(
   {
@@ -41,9 +40,6 @@ const AppNavigator = StackNavigator(
     },
     SavedItems: {
       screen: SavedItemsScreen,
-    },
-    Settings: {
-      screen: SettingsScreen,
     },
   },
   {

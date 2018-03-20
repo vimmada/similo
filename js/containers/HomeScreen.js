@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import ImagePicker from 'react-native-image-crop-picker';
 import { AsyncStorage, View, Button } from 'react-native';
 
-import { selectPhotoFromGallery, takePhotoWithCamera } from '../lib';
+import { selectPhotoFromGallery, logout, takePhotoWithCamera } from '../lib';
 
 export default class HomeScreen extends Component {
   static navigationOptions = {
@@ -34,8 +34,8 @@ export default class HomeScreen extends Component {
           onPress={() => this.props.navigation.navigate('History')}
         />
         <Button
-          title="Settings"
-          onPress={() => this.props.navigation.navigate('Settings')}
+          title="Sign Out"
+          onPress={logout.bind(this)}
         />
         <Button
           title="Sign Out"

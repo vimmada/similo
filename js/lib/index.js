@@ -27,15 +27,13 @@ userToken = await AsyncStorage.getItem('userToken');
        'Content-Type': 'application/json',
      }
    })
-     .then((res) => {
-       return res.json();
-     })
+     .then(res => res.json())
      .then((data) => {
         return data.items;
       })
      // navigate to RecommendationsScreen
      .then((recomm) => {
-        this.props.navigation.navigate('Recommendations', { recomm });
+        this.props.navigation.navigate('Recommendations', { data : recomm });
       })
      .catch(e => console.error(e));
 }

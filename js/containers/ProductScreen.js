@@ -40,8 +40,9 @@ export default class ProductScreen extends Component {
           product_url: url,
           price: price,
         },})
-      }
-    })
+      })
+      .then(res => res.json())
+      .catch(error => console.error('Error:', error))
   }
 
   render() {

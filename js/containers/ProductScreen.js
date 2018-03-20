@@ -36,6 +36,7 @@ export default class ProductScreen extends Component {
         email: TEST_EMAIL,
         item: {
           title: name,
+          description: 'Description'
           image_url: picture,
           product_url: url,
           price: price,

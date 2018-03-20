@@ -40,8 +40,8 @@ export default class ExportScreen extends Component {
     })
     .then((response) => {
       return response.json();
-    }
-    .catch(e => console.error('Error:', e));
+    })
+    .catch(e => console.error('Error:' + e));
 
   }
 

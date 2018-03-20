@@ -6,6 +6,7 @@ import {
   FlatList,
   Text,
   TouchableOpacity,
+  Button,
 } from 'react-native';
 import { ListItem } from 'react-native-elements';
 import { API_SAVED_ITEMS, TEST_EMAIL } from '../config/constants';
@@ -67,16 +68,16 @@ export default class SavedItemsScreen extends Component {
         onPress={() => this.selectItem(item)}
       />
     );
-  );
+  }
 
   render() {
     const data = this.data;
     return (
       <View>
-        <Button>
+        <Button
           title="Export Saved Items"
           onPress={() => { this.export(data) }}
-        </Button>
+        />
         <FlatList
           data={data}
           renderItem={this._renderItem}

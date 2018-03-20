@@ -22,7 +22,7 @@ userToken = await AsyncStorage.getItem('userToken');
          email: TEST_EMAIL,
          image: photo.data, // base64 representation
      }),
-     header: {
+     headers: {
        'Authorization': userToken,
        'Content-Type': 'application/json',
      }

@@ -23,13 +23,16 @@ Similo is for fashion enthusiasts looking to draw inspiration from others’ out
 
 ## Running The Backend Server
 In __another__ terminal:
-1. `cd $SIMILO/server`
-2. `pip install -e .`
-3. `chmod +x ./bin/image-processorrun`
-4. `chmod +x ./bin/database`
-5. `./bin/database reset`
-6. `./bin/image-processorrun`
-7. To test, navigate to localhost:8000, which should say "Hello, World!"
+    cd $SIMILO/server
+    virtualenv venv
+    source venv/bin/activate
+    pip install -e .
+    pip install -r requirements.txt
+    chmod +x ./bin/image-processorrun
+    mkdir -p var
+    ./bin/image-processorrun
+
+To test, navigate to localhost:8000/api/, which should say "Hello, World!"
 
 To view the api routes, go to ./imageProcessor/views/index.py.
 

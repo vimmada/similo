@@ -18,3 +18,6 @@ class GoogleCred:
 
 Amazon = AmazonCred()
 Google = GoogleCred()
+
+
+APP_SECRET_KEY = "blockchainmachinelearningneuralnetworksarehot"

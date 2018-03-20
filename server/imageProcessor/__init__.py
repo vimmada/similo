@@ -1,8 +1,18 @@
 import flask
 from werkzeug.wsgi import DispatcherMiddleware
+from imageProcessor.model import db
+from imageProcessor.config import app_config
+from imageProcessor.views import api
 
-# app is a single object used by all the code modules in this package
-app = flask.Flask(__name__)  # pylint: disable=invalid-name
+def create_app(config_name):
+    app = flask.Flask(__name__)
+    app.config.from_object(app_config[config_name])
+    app.register_blueprint(api)
+    db.init_app(app)
+
+    with app.app_context():
+        db.create_all()
+    return app
 
 # Define a basic app to combine with our app, so that we can isolate our app
 # with prefix "/secretkey" when deploying among other student solutions
@@ -13,13 +23,3 @@ def empty_app(env, resp):
     """Exists for the purpose of deploying to 485 class servers."""
     resp('200 OK', [('Content-Type', 'text/plain')])
     return [b"Enforcing Prefix"]
-
-# Read settings from config module (insta485/config.py)
-app.config.from_object('imageProcessor.config')
-
-# Tell our app about views and model.  This is dangerously close to a
-# circular import, which is naughty, but Flask was designed that way.
-# (Reference http://flask.pocoo.org/docs/0.12/patterns/packages/)  We're
-# going to tell pylint and pycodestyle to ignore this coding style violation.
-import imageProcessor.views
-import imageProcessor.model

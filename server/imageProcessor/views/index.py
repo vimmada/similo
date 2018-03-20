@@ -1,98 +1,190 @@
 """ImageProcessor index (main) view."""
-import flask
 from flask import (session, redirect, url_for, request, abort, render_template,
-                   send_from_directory)
+                   send_from_directory, jsonify, make_response)
+from flask.blueprints import Blueprint
+from werkzeug.security import generate_password_hash, check_password_hash
 import requests
+import datetime
 import json
 import bottlenose
 import pdb
+import base64
 from bs4 import BeautifulSoup
+import re
 
-from imageProcessor import app
-from imageProcessor.model import query_db
-from imageProcessor.models.item import Item, ItemSchema
-from common import constants
-from common import cred
+from imageProcessor.model import db
+from imageProcessor.models import Item, ItemSchema, SavedItem, User, SearchLog, SearchLogSchema
+from imageProcessor.auth import token_required
+from common import cred, constants, util 
 
+api = Blueprint('views', __name__, url_prefix="/api")
 
-@app.route('/')
+def get_words():
+    words = set()
+    with open('imageProcessor/views/clothing_words.txt', 'r') as infile:
+        for word in infile:
+            word = word.lower()
+            words.add(word.strip())
+    #print(words)
+    return words
+
+def get_companies():
+    companies = set()
+    with open('imageProcessor/views/companies.txt', 'r') as infile:
+        for word in infile:
+            word = word.lower()
+            companies.add(word.strip())
+    return companies
+
+@api.route('/')
 def hello_world():
-    return 'Hello, World!'
+    return make_response(jsonify({"message" : "hello world"}))
 
 
-@app.route('/saved_items/', methods=["GET"])
-def get_saved_item():
+@api.route('/items/', methods=["GET"])
+@token_required
+def get_saved_items(current_user):
+    """
+    Returns a list of items that the user has saved
+    """
+    saved_items = current_user.saved_items
+    schema = ItemSchema(many=True)
     context = {}
-    context["hello"] = "cody"
-    return flask.make_response(flask.jsonify(**context), 200)
+    context["items"] = schema.dump(saved_items).data
+    return make_response(jsonify(**context), 200)
 
 
-@app.route('/saved_items/add/', methods=["POST"])
-def add_saved_item():
+@api.route('/items/', methods=["POST"])
+@token_required
+def add_saved_item(current_user):
+    """
+    Add an item to the user's saved items list and sends item back with
+    newly generated itemID.
+
+    Product url is the unique identifier
+
+    Item to add should have the following data:
+    "item": {   title
+                description
+                image_url
+                product_url
+                price
+            }
+    """
+    if not request.json or 'item' not in request.json:
+        abort(400)
+    
     context = {}
-    return flask.make_response(flask.jsonify(**context), 201)
+    schema = ItemSchema()
+    item = schema.loads(request.json['item']).data
+    # Look to see if user has already saved this item
+    found_item = None
+    for saved in current_user.saved_items:
+        if saved.product_url == item.product_url:
+            found_item = saved
+            break
+
+    if found_item:
+        # Deep copy the updated, new item into the database
+        found_item.title = item.title
+        found_item.description = item.description
+        found_item.price = item.price
+        found_item.image_url = item.image_url
+        context["item"] = schema.dump(found_item).data
+    else:
+        save_item = SavedItem(**(schema.dump(item)))
+        context["item"] = schema.dump(save_item).data
+        db.session.add(save_item)
+    db.session.commit()
+
+    return make_response(jsonify(**context), 201)
 
 
-@app.route('/saved_items/delete/', methods=["POST"])
-def delete_saved_item():
+@api.route('/items/', methods=["DELETE"])
+@token_required
+def delete_saved_item(current_user):
+    """
+    Delete an item from the user's saved items list
+
+    Request json should have: {
+        'item_id': int
+    }
+    """
+    if not request.json or 'item_id' not in request.json:
+        abort(400)
+
+    item_id = request.json['item_id']
+    for saved in current_user.saved_items:
+        if saved.item_id == item_id:
+            db.session.delete(saved)
+            db.session.commit()
+            return make_response("Success", 201)
+    
+    return make_response("Item can't be deleted - item not found", 404)
+
+
+@api.route('/export_saved/', methods=["POST"])
+@token_required
+def export_saved(current_user):
+    """
+    Request json should have: {
+        'email': email
+    }
+    """
     context = {}
-    return flask.make_response(flask.jsonify(**context), 201)
+    return make_response(jsonify(**context), 201)
 
 
-@app.route('/export_saved/', methods=["POST"])
-def export_saved():
+@api.route('/history/', methods=["GET"])
+@token_required
+def get_history(current_user):
     context = {}
-    return flask.make_response(flask.jsonify(**context), 201)
+    search_history = current_user.prev_searches
+    schema = SearchLogSchema(many=True)
+    context["history"] = schema.dump(search_history).data
+    return make_response(jsonify(**context), 200)
 
 
-@app.route('/history/', methods=["GET"])
-def get_history():
-    context = {}
-    return flask.make_response(flask.jsonify(**context), 200)
+CLOTHING_WORDS = get_words()
+COMPANIES = get_companies()
+@api.route('/search/', methods=["POST"])
+@token_required
+def search(current_user):
+    """
+    - Gets keywords associated with the image
+    - Uses amazon's search engine to get the item details
+    - Add image to history of searches
+    - Purge user search history of > KEEP_HISTORY most recent items
+    - Returns json of items(item_name, description, price, and link)
 
-
-@app.route('/item/', methods=["GET"])
-def return_product_details():
-    context = {}
-    return flask.make_response(flask.jsonify(**context), 200)
-
-# 1. Add it to history of searches
-# 2. Gets keywords associated with the image
-# 3. Uses amazon's search engine to get the item details
-# 4. Returns json of items(item_name, description, price, and link)
-@app.route('/search/', methods=["POST"])
-def search(): 
+    Request JSON should have: {
+        'email': email
+        'image': base64 encoding of the image
+    }
+    """
     context = {}
     if not request.json or not "image" in request.json:
         abort(400)
 
+    image = request.json['image']
     # 1. Add it to history of searches
-    userids_with_email = query_db(
-        '''
-        SELECT userid FROM Users WHERE email = ?''', (request.json['email'],))
-    userid = userids_with_email[0] 
-
-    # TODO: Uncomment this section below and fix why the schema cannot handle request.json['image']
-    # query_db(
-    #     '''
-    #     INSERT INTO history_items (image, userid) VALUES (?, ?)
-    #     ''', (request.json['image'], userid))
+    search = SearchLog(image=base64.b64decode(image),
+                       date_created=datetime.datetime.now(),
+                       user_id=current_user.user_id)
+    db.session.add(search)
+    db.session.commit()
 
     # 2. Gets keywords associated with the image
-
-    # I get the image in the format of base64 encoding
-    # image is hardcoded for now but in the future will come from the client(request.json['image'])
-    
     data = {
         "requests":[
             {
             "image":{
-                "content": constants.image
+                "content": image
             },
             "features":[
                 {
                 "type":"LABEL_DETECTION",
-                "maxResults":10 # change this number to get more labels
+                "maxResults":8 # change this number to get more labels
                 },
                 {
                 "type":"LOGO_DETECTION",
@@ -103,28 +195,59 @@ def search():
                 },
                 {
                 "type": "IMAGE_PROPERTIES"
+                },
+                {
+                "type": "TEXT_DETECTION"
                 }
             ]
             }
         ]
     }
     data = json.dumps(data)
-    results = requests.post(url='https://vision.googleapis.com/v1/images:annotate?key=' + cred.Google.API_KEY, data = data)
+    results = requests.post(url=('https://vision.googleapis.com/v1/images:annotate?key=' + cred.Google.API_KEY), data=data)
     results = results.json()
+    print(results)
     labels = results['responses'][0]['labelAnnotations']
+    web_entities = results['responses'][0]['webDetection']['webEntities']
+    search_terms = []
+    for label in labels:
+        if "description" in label:
+            description = label['description'].split(' ')
+            for word in description:
+                if word.lower() in CLOTHING_WORDS:
+                    if word.lower() not in search_terms:
+                        search_terms.append(word.lower())
+            if (label['description']).lower() in COMPANIES:
+                search_terms.insert(0, label['description'].lower())
+        
+    count = 0
+    for entity in web_entities:
+        if count > 7:
+            break
+        if 'description' in entity:
+            description = entity['description'].split(' ')
+            for word in description:
+                if word.lower() in CLOTHING_WORDS:
+                    if word.lower() not in search_terms:
+                        search_terms.append(word.lower())
+            if (entity['description']).lower() in COMPANIES:
+                search_terms.insert(0, entity['description'].lower())
+            count = count + 1
+    
+    if 'logoAnnotations' in results['responses'][0]:
+        logo = results['responses'][0]['logoAnnotations'][0]['description']
+        search_terms.insert(0, logo)
 
-    # TODO: Filter keywords for clothing items only
-    # keywords = [label.get("description") for label in labels]
-    keywords = ["blue", "jeans"]
-
+    keywords = search_terms
+    
     # 3. Uses amazon's search engine to get the item details
     amazon = bottlenose.Amazon(
-            cred.Amazon.ACCESS_KEY, 
-            cred.Amazon.SECRET_KEY, 
+            cred.Amazon.ACCESS_KEY,
+            cred.Amazon.SECRET_KEY,
             cred.Amazon.ASSOCIATE_ID,
             Parser=lambda text: BeautifulSoup(text, 'xml'))
     res = amazon.ItemSearch(
-            Keywords= " ".join(keywords), 
+            Keywords= " ".join(keywords),
             ResponseGroup="Images,ItemAttributes",
             SearchIndex="Fashion")
 
@@ -145,42 +268,95 @@ def search():
             product_url = item.find("DetailPageURL").text
         if item.find("Amount"):
             price = int(item.find("Amount").text)
-        items.append(Item(title, image_url, product_url, price))
+        items.append(Item(title=title,
+                          image_url=image_url,
+                          product_url=product_url,
+                          price=price))
 
-    # 4 returns json of items(title, image_url, product_url, price)
+    # Returns json of items(title, image_url, product_url, price)
     schema = ItemSchema(many=True)
     items_dict = schema.dump(items)
     context["items"] = items_dict.data
-    return flask.make_response(flask.jsonify(**context), 201)
-    
+    return make_response(jsonify(**context), 201)
 
-@app.route('/user/add/', methods=["POST"])
-def create_user():
-    context = {}
+@api.route('/login/', methods=["POST"])
+def login():
+    """
+    Logs a user in, and returns a json web token for future authenticated requests
+    """
+    username = request.get_json(silent=True).get("username")
+    email = request.get_json(silent=True).get("email")
+    password = request.get_json(silent=True).get("password")
+    if not (username or email) or not password:
+        abort(400) # TODO: Handle Error - invalid request
 
-    # Check if the submitted post request has both the 'email' and 'password' field
-    if not request.json or not 'email' in request.json or not 'password' in request.json: 
+    user = None
+    if username:
+        user = User.query.filter_by(username=username).first()
+    elif email:
+        user = User.query.filter_by(email=email).first()
+    if not user:
+        # TODO: Handle Error - invalid username/password 
         abort(400)
-    
-    # Check if the user already exists and if so respond accordingly
-    user = query_db(
-        '''
-        SELECT * FROM users
-        WHERE users.email = ?
-        ''', (request.json['email'],)
-    )
+
+    if not check_password_hash(user.password_hash, password):
+        # TODO: Handle Error - invalid username/password
+        abort(400)
+
+    # Return json web token
+    token = user.get_token()
+    context = {}
+    context['username'] = user.username
+    context['token'] = token.decode('UTF-8')
+    return make_response(jsonify(**context), 200)
+
+
+@api.route('/logout/', methods=["POST"])
+@token_required
+def logout(current_user):
+    # TODO: Invalidate token somehow
+    return make_response("Logged out", 200)
+
+
+@api.route('/users/', methods=["POST"])
+def create_user():
+    """
+    Creates a user and returns a jwt for future authenticated requests
+    """
+    # TODO: Verify fields
+    if not request.json \
+        or not 'username' in request.json \
+        or not 'email' in request.json \
+        or not 'password' in request.json \
+        or not 'firstname' in request.json \
+        or not 'lastname' in request.json:
+        abort(400)
+
+    # Check user doesn't already exist
+    user = User.query.filter_by(username=request.json['username']).first()
     if user:
         abort(400)
-    else:
-        query_db(
-        '''
-        INSERT INTO users (fullname, email, password) VALUES (?, ?, ?)
-        ''', (request.json['fullname'], request.json['email'], request.json['password']))
+    user = User.query.filter_by(email=request.json['email']).first()
+    if user:
+        abort(400)
 
-    context['fullname'] = request.json['fullname']
-    context['email'] = request.json['email']
+    # Insert user into db
+    password_hash = generate_password_hash(request.json['password'])
+    public_id = util.get_uuid()
 
-    return flask.make_response(flask.jsonify(**context), 201)
-
-
-
+    user = User(
+        public_id=public_id,
+        username=request.json['username'],
+        email=request.json['email'],
+        password_hash=password_hash,
+        firstname=request.json['firstname'],
+        lastname=request.json['lastname'])
+    db.session.add(user)
+    db.session.commit()
+    
+    # Return json web token
+    token = user.get_token()
+    context = {}
+    context['username'] = request.json['username']
+    context['token'] = token.decode('UTF-8')
+    return make_response(jsonify(**context), 201)

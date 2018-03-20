@@ -7,17 +7,17 @@ CREATE TABLE users (
 
 CREATE TABLE saved_items (
   itemid INTEGER PRIMARY KEY AUTOINCREMENT,
-  item_title TEXT NOT NULL,
-  description VARCHAR(1000) NOT NULL,
+  title VARCHAR(256) NOT NULL,
+  description VARCHAR(5000) NOT NULL,
   price REAL,
-  link TEXT NOT NULL,
+  product_url VARCHAR(2083) NOT NULL,
+  image_url VARCHAR(2083) NOT NULL,
   userid INTEGER NOT NULL,
   FOREIGN KEY(userid) REFERENCES users(userid) ON DELETE CASCADE
 );
 
-CREATE TABLE history_items (
+CREATE TABLE search_history (
   image BLOB NOT NULL,
-  userid INTEGER NOT NULL,
   searched TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
   FOREIGN KEY(userid) REFERENCES users(userid) ON DELETE CASCADE
 );

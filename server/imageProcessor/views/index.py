@@ -173,7 +173,7 @@ def search(current_user):
                        user_id=current_user.user_id)
     db.session.add(search)
     db.session.commit()
-    
+
     # 2. Gets keywords associated with the image
     data = {
         "requests":[
@@ -206,6 +206,7 @@ def search(current_user):
     data = json.dumps(data)
     results = requests.post(url=('https://vision.googleapis.com/v1/images:annotate?key=' + cred.Google.API_KEY), data=data)
     results = results.json()
+    print(results)
     labels = results['responses'][0]['labelAnnotations']
     web_entities = results['responses'][0]['webDetection']['webEntities']
     search_terms = []
@@ -269,7 +270,10 @@ def search(current_user):
             product_url = item.find("DetailPageURL").text
         if item.find("Amount"):
             price = int(item.find("Amount").text)
-        items.append(Item(title, image_url, product_url, price))
+        items.append(Item(title=title,
+                          image_url=image_url,
+                          product_url=product_url,
+                          price=price))
 
     # Returns json of items(title, image_url, product_url, price)
     schema = ItemSchema(many=True)

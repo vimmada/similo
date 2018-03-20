@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import { AsyncStorage, Button, StyleSheet, TextInput, View } from 'react-native';
+import { AsyncStorage, Button, StyleSheet, Text, TextInput, View } from 'react-native';
+
+import { login } from '../lib';
 
 const styles = StyleSheet.create({
   input: {
@@ -18,12 +20,20 @@ export default class AuthScreen extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { username: '', password: '' };
+    this.state = { username: '', password: '', statusMsg: '' };
   }
 
   authAsync = async () => {
-    await AsyncStorage.setItem('userToken', 'abc');
-    this.props.navigation.navigate('App');
+    login.bind(this)(this.state.username, this.state.password)
+      .then(async (res) => {
+        if (res.token) {
+          await AsyncStorage.setItem('userToken', res.token);
+          this.props.navigation.navigate('App');
+        } else {
+          this.setState({ username: '', password: '', statusMsg: 'Invalid credentials.' });
+        }
+      })
+      .catch(() => this.setState({ username: '', password: '', statusMsg: 'Invalid credentials.' }));
   }
 
   render() {
@@ -45,6 +55,7 @@ export default class AuthScreen extends Component {
           value={this.state.password}
           onChangeText={password => this.setState({ password })}
         />
+        <Text style={{ marginBottom: 20, color: 'red' }}>{ this.state.statusMsg }</Text>
         <Button title="Sign in" onPress={this.authAsync} />
       </View>
     );

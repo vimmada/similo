@@ -2,16 +2,11 @@ import React, { Component } from 'react';
 import ImagePicker from 'react-native-image-crop-picker';
 import { AsyncStorage, View, Button } from 'react-native';
 
-import { selectPhotoFromGallery, takePhotoWithCamera } from '../lib';
+import { selectPhotoFromGallery, logout, takePhotoWithCamera } from '../lib';
 
 export default class HomeScreen extends Component {
   static navigationOptions = {
     title: 'Similo',
-  };
-
-  signOutAsync = async () => {
-    await AsyncStorage.clear();
-    this.props.navigation.navigate('Auth');
   };
 
   render() {
@@ -35,7 +30,7 @@ export default class HomeScreen extends Component {
         />
         <Button
           title="Sign Out"
-          onPress={this.signOutAsync}
+          onPress={logout.bind(this)}
         />
       </View>
     );

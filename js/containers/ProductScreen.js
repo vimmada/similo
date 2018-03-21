@@ -5,6 +5,7 @@ import {
   View,
   Text,
   Button,
+  Linking,
 } from 'react-native';
 import { API_SAVED_ITEMS } from '../config/constants';
 
@@ -69,9 +70,9 @@ export default class ProductScreen extends Component {
           style={{width: 200, height: 200}}
           source={{uri: picture}}
         />
-        <Text style={{fontSize: 25}}> {name} </Text>
+        <Text style={{fontSize: 20, padding: 15}}> {name} </Text>
         <Text style={{fontSize: 20}}> {Price} </Text>
-        <Text style={{fontSize: 15, padding: 15}}> Link: {url} </Text>
+        <Text style={{fontSize: 15, padding: 15}} onPress={() => Linking.openURL({url})}> Link: {url} </Text>
         <Button
           title={this.state.btext}
           onPress={() => { this.saveItem() }}

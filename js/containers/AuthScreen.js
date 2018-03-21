@@ -60,10 +60,7 @@ export default class AuthScreen extends Component {
         />
         <Text style={{ marginBottom: 20, color: 'red' }}>{ this.state.statusMsg }</Text>
         <Button title="Sign in" onPress={this.authAsync.bind(this)} />
-<<<<<<< HEAD
         <Button title="Create Account" onPress={() => this.props.navigation.navigate('CreateAccount')} />
-=======
->>>>>>> 592ee0ffc82723f9f06f083052e371a2ae74bea8
       </View>
     );
   }

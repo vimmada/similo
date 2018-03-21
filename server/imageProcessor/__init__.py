@@ -23,7 +23,7 @@ def create_app(config_name):
     db.init_app(app)
 
     # Only create tables if file does not exist already
-    if app.config.get("TESTING") or app.config.get("DEV"):
+    if app.config.get("DEV"):
         with app.app_context():
             db_file = app.config.get("DATABASE_FILENAME")
             try:

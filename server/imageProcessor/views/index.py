@@ -336,15 +336,15 @@ def create_user():
         or not 'password' in request.json \
         or not 'firstname' in request.json \
         or not 'lastname' in request.json:
-        abort(400)
+        return jsonify({"error": "invalid format"}), 400
 
     # Check user doesn't already exist
     user = User.query.filter_by(username=request.json['username']).first()
     if user:
-        abort(400)
+        return jsonify({"error": "user already exists"}), 400
     user = User.query.filter_by(email=request.json['email']).first()
     if user:
-        abort(400)
+        return jsonify({"error": "user already exists"}), 400
 
     # Insert user into db
     password_hash = generate_password_hash(request.json['password'])

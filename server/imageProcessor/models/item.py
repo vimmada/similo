@@ -5,6 +5,8 @@ class SavedItem(db.Model):
     """
     SavedItem class - db Table for saved items
     """
+    __tablename__ = "saved_item"
+
     item_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String(256))
     description = db.Column(db.String(2000))

@@ -8,6 +8,8 @@ class SearchLog(db.Model):
     """
     Search History class/table
     """
+    __tablename__ = "search_log"
+
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     image = db.Column(db.LargeBinary, nullable=False)
     date_created = db.Column(db.DateTime, nullable=False)

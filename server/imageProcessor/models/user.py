@@ -1,5 +1,6 @@
 import datetime
 import jwt
+from flask import current_app
 from imageProcessor import db
 from common import cred, constants
 
@@ -7,6 +8,8 @@ class User(db.Model):
     """
     User class
     """
+    __tablename__ = "user"
+
     user_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     public_id = db.Column(db.String(50), nullable=False, unique=True, index=True)
     username = db.Column(db.String(40), nullable=False, unique=True, index=True)
@@ -26,9 +29,17 @@ class User(db.Model):
         Returns a JSON web token for the current user that
         expires in constants.TOKEN_EXP_HRS
         """
-        token = jwt.encode(
-            {'public_id' : self.public_id,
-             'exp' : datetime.datetime.utcnow() + datetime.timedelta(hours=constants.TOKEN_EXP_HRS)
-            },
-            key=cred.APP_SECRET_KEY)
+        if current_app.config.get('DEV'):
+            token = jwt.encode(
+                {
+                    'username' : self.username
+                },
+                key=cred.APP_SECRET_KEY)
+        else:
+            token = jwt.encode(
+                {
+                    'public_id' : self.public_id,
+                    'exp' : datetime.datetime.utcnow() + datetime.timedelta(hours=constants.TOKEN_EXP_HRS)
+                },
+                key=cred.APP_SECRET_KEY)
         return token

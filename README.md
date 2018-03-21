@@ -28,6 +28,13 @@ chmod +x ./bin/image-processorrun
 ./bin/image-processorrun
 ```
 
+For running tests:
+```
+cd $SIMILO/server
+source venv/bin/activate
+python -m unittest
+```
+
 To test, navigate to localhost:8000/api/, which should say "Hello, World!"
 
 To view the api routes, go to ./imageProcessor/views/index.py.

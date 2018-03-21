@@ -7,15 +7,14 @@ Upload an image and get product recommendations
 
 **Method** : `POST`
 
-**Auth required** : Not yet
+**Auth required** : JSON Web Token
 
 **Permissions required** : None
 
 ## Request
 ```json
 {
-    "image": TODO - not yet implemented- currently using a hard-coded image
-    "email": "philosopher@similo.com"
+    "image": # base64 encoded string
 }
 ```
 
@@ -41,7 +40,3 @@ Upload an image and get product recommendations
     ]
 }
 ```
-
-## Notes
-
-* For now, the server has "blue jeans" hard-coded in the search since we don't have a good way of filtering keywords from Google Cloud Vision API yet.

@@ -54,7 +54,7 @@ def get_saved_items(current_user):
     return make_response(jsonify(**context), 200)
 
 
-@api.route('/items/', methods=["POST"])
+@api.route('/items/', methods=["PUT"])
 @token_required
 def add_saved_item(current_user):
     """
@@ -71,12 +71,19 @@ def add_saved_item(current_user):
                 price
             }
     """
-    if not request.json or 'item' not in request.json:
+    # TODO: Better validation
+    if not request.json \
+        or 'item' not in request.json \
+        or 'title' not in request.json['item'] \
+        or 'description' not in request.json['item'] \
+        or 'image_url' not in request.json['item'] \
+        or 'product_url' not in request.json['item'] \
+        or 'price' not in request.json['item']:
         abort(400)
 
     context = {}
     schema = ItemSchema()
-    item = schema.loads(request.json['item']).data
+    item = Item(**schema.load(request.json['item']).data)
     # Look to see if user has already saved this item
     found_item = None
     for saved in current_user.saved_items:
@@ -92,9 +99,10 @@ def add_saved_item(current_user):
         found_item.image_url = item.image_url
         context["item"] = schema.dump(found_item).data
     else:
-        save_item = SavedItem(**(schema.dump(item)))
+        save_item = SavedItem(**(schema.dump(item).data))
         context["item"] = schema.dump(save_item).data
-        db.session.add(save_item)
+        current_user.saved_items.append(save_item)
+        db.session.add(current_user)
     db.session.commit()
 
     return make_response(jsonify(**context), 201)
@@ -206,7 +214,6 @@ def search(current_user):
     data = json.dumps(data)
     results = requests.post(url=('https://vision.googleapis.com/v1/images:annotate?key=' + cred.Google.API_KEY), data=data)
     results = results.json()
-    # print(results)
     labels = results['responses'][0]['labelAnnotations']
     web_entities = results['responses'][0]['webDetection']['webEntities']
     search_terms = []

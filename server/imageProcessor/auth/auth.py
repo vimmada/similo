@@ -20,5 +20,8 @@ def token_required(f):
             print(e)
             return jsonify({"message" : "User not found"}), 401
 
+        if not user:
+            return jsonify({"message" : "User not found"}), 401
+
         return f(user, *args, **kwargs)
     return auth

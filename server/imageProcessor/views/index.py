@@ -15,7 +15,7 @@ import re
 from imageProcessor.model import db
 from imageProcessor.models import Item, ItemSchema, SavedItem, User, SearchLog, SearchLogSchema
 from imageProcessor.auth import token_required
-from common import cred, constants, util 
+from common import cred, constants, util
 
 api = Blueprint('views', __name__, url_prefix="/api")
 
@@ -73,7 +73,7 @@ def add_saved_item(current_user):
     """
     if not request.json or 'item' not in request.json:
         abort(400)
-    
+
     context = {}
     schema = ItemSchema()
     item = schema.loads(request.json['item']).data
@@ -119,7 +119,7 @@ def delete_saved_item(current_user):
             db.session.delete(saved)
             db.session.commit()
             return make_response("Success", 201)
-    
+
     return make_response("Item can't be deleted - item not found", 404)
 
 
@@ -206,7 +206,7 @@ def search(current_user):
     data = json.dumps(data)
     results = requests.post(url=('https://vision.googleapis.com/v1/images:annotate?key=' + cred.Google.API_KEY), data=data)
     results = results.json()
-    print(results)
+    # print(results)
     labels = results['responses'][0]['labelAnnotations']
     web_entities = results['responses'][0]['webDetection']['webEntities']
     search_terms = []
@@ -219,7 +219,7 @@ def search(current_user):
                         search_terms.append(word.lower())
             if (label['description']).lower() in COMPANIES:
                 search_terms.insert(0, label['description'].lower())
-        
+
     count = 0
     for entity in web_entities:
         if count > 7:
@@ -233,13 +233,13 @@ def search(current_user):
             if (entity['description']).lower() in COMPANIES:
                 search_terms.insert(0, entity['description'].lower())
             count = count + 1
-    
+
     if 'logoAnnotations' in results['responses'][0]:
         logo = results['responses'][0]['logoAnnotations'][0]['description']
         search_terms.insert(0, logo)
 
     keywords = search_terms
-    
+
     # 3. Uses amazon's search engine to get the item details
     amazon = bottlenose.Amazon(
             cred.Amazon.ACCESS_KEY,
@@ -296,7 +296,7 @@ def login():
     elif email:
         user = User.query.filter_by(email=email).first()
     if not user:
-        # TODO: Handle Error - invalid username/password 
+        # TODO: Handle Error - invalid username/password
         abort(400)
 
     if not check_password_hash(user.password_hash, password):
@@ -353,7 +353,7 @@ def create_user():
         lastname=request.json['lastname'])
     db.session.add(user)
     db.session.commit()
-    
+
     # Return json web token
     token = user.get_token()
     context = {}

@@ -206,7 +206,7 @@ def search(current_user):
     data = json.dumps(data)
     results = requests.post(url=('https://vision.googleapis.com/v1/images:annotate?key=' + cred.Google.API_KEY), data=data)
     results = results.json()
-    print(results)
+    # print(results)
     labels = results['responses'][0]['labelAnnotations']
     web_entities = results['responses'][0]['webDetection']['webEntities']
     search_terms = []

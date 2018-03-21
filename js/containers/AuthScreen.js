@@ -27,7 +27,7 @@ export default class AuthScreen extends Component {
 
   authAsync = async () => {
     login.bind(this)(this.state.username, this.state.password)
-      .then(res => { console.error(res.state); res.json() })
+      .then(res => res.json())
       .then(async (data) => {
         if (data.token) {
           await AsyncStorage.setItem('userToken', data.token);

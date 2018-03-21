@@ -25,7 +25,6 @@ def get_words():
         for word in infile:
             word = word.lower()
             words.add(word.strip())
-    #print(words)
     return words
 
 def get_companies():

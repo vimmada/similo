@@ -5,5 +5,4 @@ export FLASK_DEBUG=True
 export FLASK_APP=imageProcessor/run.py
 export APP_SETTINGS=development
 
-export INSTA485_SETTINGS=config.py
 flask run --host 0.0.0.0 --port 8000

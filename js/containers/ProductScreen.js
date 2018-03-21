@@ -11,6 +11,9 @@ import { API_SAVED_ITEMS } from '../config/constants';
 
 
 export default class ProductScreen extends Component {
+  static navigationOptions = {
+    title: 'Product Details'
+  };
   constructor(props) {
     super(props);
     this.state = {
@@ -72,7 +75,7 @@ export default class ProductScreen extends Component {
         />
         <Text style={{fontSize: 20, padding: 15}}> {name} </Text>
         <Text style={{fontSize: 20}}> {Price} </Text>
-        <Text style={{fontSize: 15, padding: 15}} onPress={() => Linking.openURL({url})}> Link: {url} </Text>
+        <Text style={{fontSize: 15, padding: 15, color: '#4285f4'}} onPress={() => Linking.openURL(url)}>Go to product webpage.</Text>
         <Button
           title={this.state.btext}
           onPress={() => { this.saveItem() }}

@@ -10,6 +10,9 @@ import {
 import { ListItem } from 'react-native-elements';
 
 export default class RecommendationsScreen extends Component {
+  static navigationOptions = {
+    title: 'Recommendations'
+  };
   constructor(props) {
     super(props);
 

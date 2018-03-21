@@ -5,6 +5,7 @@ import AuthLoadingScreen from '../containers/AuthLoadingScreen';
 import AuthScreen from '../containers/AuthScreen';
 import BufferScreen from '../containers/BufferScreen';
 import ExportScreen from '../containers/ExportScreen';
+import CreateAccountScreen from '../containers/CreateAccountScreen.js';
 import FilterScreen from '../containers/FilterScreen';
 import HomeScreen from '../containers/HomeScreen';
 import HistoryScreen from '../containers/HistoryScreen';
@@ -47,7 +48,19 @@ const AppNavigator = StackNavigator(
   },
 );
 
-const AuthNavigator = StackNavigator({ Login: { screen: AuthScreen } });
+const AuthNavigator = StackNavigator(
+  {
+    Login: {
+      screen: AuthScreen
+    },
+    CreateAccount: {
+      screen: CreateAccountScreen,
+    },
+  },
+  {
+    initialRouteName: 'Login',
+  }
+);
 
 const RootNavigator = SwitchNavigator(
   {

@@ -1,7 +1,7 @@
 import { AsyncStorage } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 
-import { API_ENDPOINT_AUTH, API_ENDPOINT_SEARCH, TEST_EMAIL, CROP_WIDTH, CROP_HEIGHT } from '../config/constants';
+import { API_ENDPOINT_AUTH, API_ENDPOINT_SEARCH, API_ENDPOINT_USERS, TEST_EMAIL, CROP_WIDTH, CROP_HEIGHT } from '../config/constants';
 
 const photoOptions = {
   cropping: true,
@@ -15,7 +15,8 @@ const photoOptions = {
 async function uploadPhoto(photo) {
   this.props.navigation.navigate('Buffer', { photo });
 
-  userToken = await AsyncStorage.getItem('userToken');
+  const userToken = await AsyncStorage.getItem('userToken');
+
   return fetch(API_ENDPOINT_SEARCH, {
     method: 'POST',
     body: JSON.stringify({
@@ -29,10 +30,8 @@ async function uploadPhoto(photo) {
   })
     .then(res => res.json())
     .then(data => data.items)
-  // navigate to RecommendationsScreen
-    .then((recomm) => {
-      this.props.navigation.navigate('Recommendations', { data: recomm });
-    })
+    // navigate to RecommendationsScreen
+    .then(recomm => this.props.navigation.navigate('Recommendations', { data: recomm }))
     .catch(e => console.error(e));
 }
 
@@ -49,7 +48,7 @@ export function takePhotoWithCamera() {
 }
 
 export async function login(username, password) {
-  userToken = await AsyncStorage.getItem('userToken');
+  const userToken = await AsyncStorage.getItem('userToken');
 
   return fetch(API_ENDPOINT_AUTH, {
     method: 'POST',
@@ -67,4 +66,20 @@ export async function login(username, password) {
 export async function logout() {
   await AsyncStorage.clear();
   this.props.navigation.navigate('Auth');
+}
+
+export function createAccount({ username, email, password, firstname, lastname }) {
+  return fetch(API_ENDPOINT_USERS, {
+    method: 'POST',
+    body: JSON.stringify({
+      username,
+      email,
+      password,
+      firstname,
+      lastname,
+    }),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
 }

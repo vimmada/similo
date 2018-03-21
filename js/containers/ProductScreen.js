@@ -35,7 +35,7 @@ export default class ProductScreen extends Component {
       body: JSON.stringify({
         item: {
           title: name,
-          description: 'Description'
+          description: 'Description',
           image_url: picture,
           product_url: url,
           price: price,
@@ -63,9 +63,9 @@ export default class ProductScreen extends Component {
           style={{width: 200, height: 200}}
           source={{uri: picture}}
         />
-        <Text> {name} </Text>
-        <Text> Link: {url} </Text>
-        <Text> {Price} </Text>
+        <Text style={{fontSize: 25}}> {name} </Text>
+        <Text style={{fontSize: 20}}> {Price} </Text>
+        <Text style={{fontSize: 15, padding: 15}}> Link: {url} </Text>
         <Button
           title={this.state.btext}
           onPress={() => { this.saveItem() }}

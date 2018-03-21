@@ -3,18 +3,14 @@ Similo is for fashion enthusiasts looking to draw inspiration from others’ out
 
 ## Notes
 - `js/` contains frontend components; `server/` contains backend components
-- Currently we are having issues using the [react-native-camera](https://github.com/react-native-community/react-native-camera) module, so we can only upload photos from the photo gallery.
 - To add a photo to an iOS/Android simulator's photo gallery, open the photo gallery and just drag the photo in.
-- Currently an image is hard-coded into the backend.
+- **Use Python 3!**
 
 ## Getting started
 1. `git clone https://github.com/perryjiang/similo.git`
 2. Install dependencies mentioned under "Building Projects with Native Code" [here](https://facebook.github.io/react-native/docs/getting-started.html).
 3. `cd similo && yarn install` _or_ `cd similo && npm install`
 4. `react-native link`
-
-### iOS
-1. Open the project in Xcode, and using the Project Navigator, expand the RNCamera project and delete the FaceDetector folder. **The project will not compile on iOS without this step!**
 
 ## Building Similo
 1. `cd similo && react-native start`
@@ -23,14 +19,16 @@ Similo is for fashion enthusiasts looking to draw inspiration from others’ out
 
 ## Running The Backend Server
 In __another__ terminal:
-    cd $SIMILO/server
-    virtualenv venv
-    source venv/bin/activate
-    pip install -e .
-    pip install -r requirements.txt
-    chmod +x ./bin/image-processorrun
-    mkdir -p var
-    ./bin/image-processorrun
+```
+cd $SIMILO/server
+virtualenv venv
+source venv/bin/activate
+pip install -e .
+pip install -r requirements.txt
+chmod +x ./bin/image-processorrun
+mkdir -p var
+./bin/image-processorrun
+```
 
 To test, navigate to localhost:8000/api/, which should say "Hello, World!"
 

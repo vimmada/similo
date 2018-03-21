@@ -21,19 +21,22 @@ export default class AuthScreen extends Component {
     super(props);
 
     this.state = { username: '', password: '', statusMsg: '' };
+
+    this.authAsync = this.authAsync.bind(this);
   }
 
   authAsync = async () => {
     login.bind(this)(this.state.username, this.state.password)
-      .then(async (res) => {
-        if (res.token) {
-          await AsyncStorage.setItem('userToken', res.token);
+      .then(res => { console.error(res.state); res.json() })
+      .then(async (data) => {
+        if (data.token) {
+          await AsyncStorage.setItem('userToken', data.token);
           this.props.navigation.navigate('App');
         } else {
           this.setState({ username: '', password: '', statusMsg: 'Invalid credentials.' });
         }
       })
-      .catch(() => this.setState({ username: '', password: '', statusMsg: 'Invalid credentials.' }));
+      .catch(() => this.setState({ username: '', password: '', statusMsg: 'A network error occured.' }));
   }
 
   render() {
@@ -56,7 +59,8 @@ export default class AuthScreen extends Component {
           onChangeText={password => this.setState({ password })}
         />
         <Text style={{ marginBottom: 20, color: 'red' }}>{ this.state.statusMsg }</Text>
-        <Button title="Sign in" onPress={this.authAsync} />
+        <Button title="Sign in" onPress={this.authAsync.bind(this)} />
+        <Button title="Create Account" onPress={() => this.props.navigation.navigate('CreateAccount')} />
       </View>
     );
   }

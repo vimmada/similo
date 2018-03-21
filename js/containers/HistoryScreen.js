@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {
+  AsyncStorage,
   StyleSheet,
   Image,
   View,
@@ -23,17 +24,20 @@ export default class HistoryScreen extends Component {
   }
 
   componentDidMount() {
-    fetch(API_HISTORY, {credentials: 'same-origin'})
-    .then((response) => {
-      if (!response.ok) throw Error(response.statusText)
-      return response.json();
-    })
-    .then((data) => {
-      this.setState({
-        data: data.items,
+    AsyncStorage.getItem('userToken')
+      .then(userToken => {
+        fetch(API_HISTORY, { headers: { 'Authorization': userToken }})
+        .then((response) => {
+          if (!response.ok) throw Error(response.statusText)
+          return response.json();
+        })
+        .then((data) => {
+          this.setState({
+            data: data.items,
+          });
+        })
+        .catch(e => console.error(e));
       });
-    })
-    .catch(e => console.error(e));
   }
 
   selectItem(item) {

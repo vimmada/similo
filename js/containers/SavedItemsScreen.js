@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {
+  AsyncStorage,
   StyleSheet,
   Image,
   View,
@@ -27,16 +28,19 @@ export default class SavedItemsScreen extends Component {
   }
 
   componentDidMount() {
-    fetch(API_SAVED_ITEMS, { credentials: 'same-origin', method: 'GET' })
-    .then((response) => {
-      return response.json()
-    })
-    .then((data) => {
-      this.setState({
-        data: data.items,
-      });
-    })
-    .catch(e => console.error(e));
+    AsyncStorage.getItem('userToken')
+      .then(userToken => {
+        fetch(API_SAVED_ITEMS, { headers: { 'Authorization': userToken }})
+        .then((response) => {
+          return response.json()
+        })
+        .then((data) => {
+          this.setState({
+            data: data.items,
+          });
+        })
+        .catch(e => console.error(e));
+      })
   }
 
   selectItem(item) {

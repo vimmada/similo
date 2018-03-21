@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {
+  AsyncStorage,
   Image,
   View,
   Text,
@@ -18,7 +19,8 @@ export default class ProductScreen extends Component {
     this.saveItem = this.saveItem.bind(this);
   }
 
-  saveItem() {
+  saveItem = async () => {
+    const userToken = await AsyncStorage.getItem('userToken');
     this.setState({
       saved: true,
       btext: 'Item Saved',
@@ -30,7 +32,6 @@ export default class ProductScreen extends Component {
     const picture = params ? params.picture : null;
     fetch(API_SAVED_ITEMS, {
       method: 'POST',
-      header: 'Content-Type: application/json',
       credentials: 'same-origin',
       body: JSON.stringify({
         item: {
@@ -39,8 +40,13 @@ export default class ProductScreen extends Component {
           image_url: picture,
           product_url: url,
           price: price,
-        },})
-      })
+        },
+      }),
+      headers: {
+        'Authorization': userToken,
+        'Content-Type': 'application/json',
+      },
+    })
       .then(res => res.json())
       .catch(error => console.error('Error:', error))
   }

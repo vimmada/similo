@@ -35,10 +35,6 @@ export default class HomeScreen extends Component {
         />
         <Button
           title="Sign Out"
-          onPress={logout.bind(this)}
-        />
-        <Button
-          title="Sign Out"
           onPress={this.signOutAsync}
         />
       </View>

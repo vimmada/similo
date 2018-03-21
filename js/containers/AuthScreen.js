@@ -25,6 +25,7 @@ export default class AuthScreen extends Component {
 
   authAsync = async () => {
     login.bind(this)(this.state.username, this.state.password)
+      .then(res => res.json())
       .then(async (res) => {
         if (res.token) {
           await AsyncStorage.setItem('userToken', res.token);
@@ -56,7 +57,7 @@ export default class AuthScreen extends Component {
           onChangeText={password => this.setState({ password })}
         />
         <Text style={{ marginBottom: 20, color: 'red' }}>{ this.state.statusMsg }</Text>
-        <Button title="Sign in" onPress={this.authAsync} />
+        <Button title="Sign in" onPress={this.authAsync.bind(this)} />
       </View>
     );
   }

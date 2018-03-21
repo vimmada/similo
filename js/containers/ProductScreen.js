@@ -5,7 +5,7 @@ import {
   Text,
   Button,
 } from 'react-native';
-import { API_SAVED_ITEMS, TEST_EMAIL } from '../config/constants';
+import { API_SAVED_ITEMS } from '../config/constants';
 
 
 export default class ProductScreen extends Component {
@@ -33,7 +33,6 @@ export default class ProductScreen extends Component {
       header: 'Content-Type: application/json',
       credentials: 'same-origin',
       body: JSON.stringify({
-        email: TEST_EMAIL,
         item: {
           title: name,
           description: 'Description'

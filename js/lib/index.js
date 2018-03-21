@@ -15,27 +15,25 @@ const photoOptions = {
 async function uploadPhoto(photo) {
   this.props.navigation.navigate('Buffer', { photo });
 
-userToken = await AsyncStorage.getItem('userToken');
-   return fetch(API_ENDPOINT_SEARCH, {
-     method: 'POST',
-     body: JSON.stringify({
-         email: TEST_EMAIL,
-         image: photo.data, // base64 representation
-     }),
-     headers: {
-       'Authorization': userToken,
-       'Content-Type': 'application/json',
-     }
-   })
-     .then(res => res.json())
-     .then((data) => {
-        return data.items;
-      })
-     // navigate to RecommendationsScreen
-     .then((recomm) => {
-        this.props.navigation.navigate('Recommendations', { data : recomm });
-      })
-     .catch(e => console.error(e));
+  userToken = await AsyncStorage.getItem('userToken');
+  return fetch(API_ENDPOINT_SEARCH, {
+    method: 'POST',
+    body: JSON.stringify({
+      email: TEST_EMAIL,
+      image: photo.data, // base64 representation
+    }),
+    headers: {
+      Authorization: userToken,
+      'Content-Type': 'application/json',
+    },
+  })
+    .then(res => res.json())
+    .then(data => data.items)
+  // navigate to RecommendationsScreen
+    .then((recomm) => {
+      this.props.navigation.navigate('Recommendations', { data: recomm });
+    })
+    .catch(e => console.error(e));
 }
 
 export function selectPhotoFromGallery() {
@@ -56,13 +54,13 @@ export async function login(username, password) {
   return fetch(API_ENDPOINT_AUTH, {
     method: 'POST',
     body: JSON.stringify({
-      username: username,
-      password: password,
+      username,
+      password,
     }),
     headers: {
-      'Authorization': userToken,
+      Authorization: userToken,
       'Content-Type': 'application/json',
-    }
+    },
   });
 }
 

@@ -27,7 +27,7 @@ export default class SavedItemsScreen extends Component {
   }
 
   componentDidMount() {
-    fetch(API_SAVED_ITEMS, { credentials: 'same-origin' })
+    fetch(API_SAVED_ITEMS, { credentials: 'same-origin', method: 'GET' })
     .then((response) => {
       return response.json()
     })

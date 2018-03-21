@@ -17,16 +17,14 @@ Similo is for fashion enthusiasts looking to draw inspiration from others’ out
 2. In another terminal, navigate to the project directory and run `npm run <ios/android>`.
 3. Optional: follow [this guide](https://facebook.github.io/react-native/docs/debugging.html) to enable React Native's live or hot reloading.
 
-## Running The Backend Server
+## Running the server for development:
 In __another__ terminal:
 ```
 cd $SIMILO/server
 virtualenv venv
 source venv/bin/activate
-pip install -e .
 pip install -r requirements.txt
 chmod +x ./bin/image-processorrun
-mkdir -p var
 ./bin/image-processorrun
 ```
 

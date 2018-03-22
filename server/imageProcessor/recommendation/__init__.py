@@ -1,1 +1,1 @@
-from keywordsToQueries import *
+from .keywordsToQueries import *

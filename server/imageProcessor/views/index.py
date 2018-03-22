@@ -125,9 +125,9 @@ def delete_saved_item(current_user):
         if saved.item_id == item_id:
             db.session.delete(saved)
             db.session.commit()
-            return make_response("Success", 201)
+            return make_response(jsonify({"message": "Success"}), 202)
 
-    return make_response("Item can't be deleted - item not found", 404)
+    return make_response(jsonify({"error": "Item can't be deleted - item not found"}), 404)
 
 
 @api.route('/export_saved/', methods=["POST"])
@@ -301,6 +301,7 @@ def login():
         user = User.query.filter_by(username=username).first()
     elif email:
         user = User.query.filter_by(email=email).first()
+
     if not user:
         # TODO: Handle Error - invalid username/password
         abort(400)
@@ -321,7 +322,7 @@ def login():
 @token_required
 def logout(current_user):
     # TODO: Invalidate token somehow
-    return make_response("Logged out", 200)
+    return make_response(jsonify({"message": "Logged out"}), 200)
 
 
 @api.route('/users/', methods=["POST"])

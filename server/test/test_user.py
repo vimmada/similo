@@ -27,18 +27,24 @@ class TestUser(BaseTest):
 
     def test_can_login_user(self):
         """User can login"""
-        self.create_user(test_user1)
+        user = self.create_user(test_user1)
         res = self.post(
             path=self.make_route("/login/"),
             data=json.dumps({
-                "username": test_user1['username'],
-                "password": test_user1['password']
+                "username": user.username,
+                "password": user.password
                 }))
         data, status = self.get_data_status(res)
         self.assertIn("token", data)
         self.assertEqual(status, 200)
 
-    @unittest.skip("STUB")
     def test_cannot_create_duplicate_user(self):
         """Should not be able to duplicate usernames or emails"""
-        pass
+        user1 = self.create_user(test_user1)
+
+        res = self.post(
+            path=self.make_route("/users/"),
+            data=json.dumps(test_user1))
+        data, status = self.get_data_status(res)
+        self.assertNotEqual(status, 201)
+        self.assertNotIn("token", data)

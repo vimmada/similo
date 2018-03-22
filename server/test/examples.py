@@ -6,6 +6,14 @@ test_user1 = {
     "lastname" : "Smith"
 }
 
+test_user2 = {
+    "username" : "kanyewest",
+    "email" : "kanye@west.com",
+    "password" : "golddigger",
+    "firstname" : "Kanye",
+    "lastname" : "West"
+}
+
 test_item1 = {
     "item": {
         "title": "Adidas x Kanye Yeezys",

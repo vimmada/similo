@@ -240,7 +240,7 @@ def search(current_user):
     search_terms = []
 
     construct_search_terms(search_terms, annotations=labels)
-    construct_search_terms(search_terms, annotations=labels, count=7)
+    construct_search_terms(search_terms, annotations=web_entities, count=7)
 
     if 'logoAnnotations' in google_response:
         logo = google_response['logoAnnotations'][0]['description']

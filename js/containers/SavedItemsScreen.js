@@ -21,10 +21,9 @@ export default class SavedItemsScreen extends Component {
       data: []
     }
     this.selectItem = this.selectItem.bind(this);
-    this.export = this.export.bind(this);
+    this._export = this._export.bind(this);
 
     this.props.navigation.setParams({ selectItem: this.selectItem });
-
   }
 
   componentDidMount() {
@@ -49,10 +48,12 @@ export default class SavedItemsScreen extends Component {
       price: item['price'],
       url: item['product_url'],
       picture: item['image_url'],
+      item_id: item['item_id'],
+      saved: true,
     });
   }
 
-  export(data) {
+  _export(data) {
     // TODO
     // this.props.navigation.navigate('Export', {
     //   exports: data,
@@ -88,7 +89,7 @@ export default class SavedItemsScreen extends Component {
         />
         <Button
           title="Export Saved Items"
-          onPress={() => { this.export(data) }}
+          onPress={() => { this._export(data) }}
         />
       </View>
     );

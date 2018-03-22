@@ -14,9 +14,8 @@ export default class ProductScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      saved: false,
-      btext: 'Save Item',
-      id: 0,
+      saved: !!this.props.navigation.state.params.saved,
+      id: this.props.navigation.state.params.item_id,
     };
     this.saveItem = this.saveItem.bind(this);
   }
@@ -26,7 +25,6 @@ export default class ProductScreen extends Component {
     if(this.state.saved){
       this.setState({
         saved: false,
-        btext: 'Save Item',
       });
       fetch(API_SAVED_ITEMS, {
         method: 'DELETE',
@@ -44,7 +42,6 @@ export default class ProductScreen extends Component {
     else{
       this.setState({
         saved: true,
-        btext: 'Item Saved',
       });
       const { params } = this.props.navigation.state;
       const name = params ? params.name : null;
@@ -99,7 +96,7 @@ export default class ProductScreen extends Component {
         <Text style={{fontSize: 20}}> {Price} </Text>
         <Text style={{fontSize: 15, padding: 15, color: '#4285f4'}} onPress={() => Linking.openURL(url)}>Go to product webpage.</Text>
         <Button
-          title={this.state.btext}
+          title={this.state.saved ? 'Item Saved' : 'Save Item'}
           onPress={() => { this.saveItem() }}
         />
       </View>

@@ -154,6 +154,20 @@ def get_history(current_user):
 
 CLOTHING_WORDS = get_words()
 COMPANIES = get_companies()
+def construct_search_terms(search_terms, annotations, count=float('inf')):
+    for i, term in enumerate(annotations):
+        if i > count: break
+        if 'description' in term:
+            description = term['description'].split(' ')
+            for word in description:
+                word = word.lower()
+                if word in CLOTHING_WORDS and word not in search_terms:
+                    search_terms.append(word)
+            if (term['description']).lower() in COMPANIES:
+                search_terms.insert(0, term['description'].lower())
+
+
+
 @api.route('/search/', methods=["POST"])
 @token_required
 def search(current_user):
@@ -213,35 +227,23 @@ def search(current_user):
     data = json.dumps(data)
     results = requests.post(url=('https://vision.googleapis.com/v1/images:annotate?key=' + cred.Google.API_KEY), data=data)
     results = results.json()
-    labels = results['responses'][0]['labelAnnotations']
-    web_entities = results['responses'][0]['webDetection']['webEntities']
+    google_response = results['responses'][0]
+    if 'error' in google_response:
+        context = {
+            'items': [],
+            'error': google_response['error']
+        }
+        return make_response(jsonify(**context), 401)
+
+    labels = google_response['labelAnnotations']
+    web_entities = google_response['webDetection']['webEntities']
     search_terms = []
-    for label in labels:
-        if "description" in label:
-            description = label['description'].split(' ')
-            for word in description:
-                if word.lower() in CLOTHING_WORDS:
-                    if word.lower() not in search_terms:
-                        search_terms.append(word.lower())
-            if (label['description']).lower() in COMPANIES:
-                search_terms.insert(0, label['description'].lower())
 
-    count = 0
-    for entity in web_entities:
-        if count > 7:
-            break
-        if 'description' in entity:
-            description = entity['description'].split(' ')
-            for word in description:
-                if word.lower() in CLOTHING_WORDS:
-                    if word.lower() not in search_terms:
-                        search_terms.append(word.lower())
-            if (entity['description']).lower() in COMPANIES:
-                search_terms.insert(0, entity['description'].lower())
-            count = count + 1
+    construct_search_terms(search_terms, annotations=labels)
+    construct_search_terms(search_terms, annotations=labels, count=7)
 
-    if 'logoAnnotations' in results['responses'][0]:
-        logo = results['responses'][0]['logoAnnotations'][0]['description']
+    if 'logoAnnotations' in google_response:
+        logo = google_response['logoAnnotations'][0]['description']
         search_terms.insert(0, logo)
 
     keywords = search_terms

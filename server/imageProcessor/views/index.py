@@ -17,7 +17,7 @@ from imageProcessor.models import Item, ItemSchema, SavedItem, User, SearchLog, 
 from imageProcessor.auth import token_required
 from common import cred, constants, util
 
-api = Blueprint('views', __name__, url_prefix="/api")
+api = Blueprint('views', __name__ )
 
 def get_words():
     words = set()

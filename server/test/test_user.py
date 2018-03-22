@@ -17,11 +17,27 @@ class TestUser(BaseTest):
 
     def test_can_create_user(self):
         """Can create user"""
-        res = self.client.post(
-                path=self.make_route("/users/"),
-                data=json.dumps(self.test_user),
-                content_type="application/json"
-                )
+        res = self.post(
+            path=self.make_route("/users/"),
+            data=json.dumps(self.test_user))
         data, status = self.get_data_status(res)
         self.assertIn("token", data)
         self.assertEqual(status, 201)
+
+    def test_can_login_user(self):
+        """User can login"""
+        self.create_user()
+        res = self.post(
+            path=self.make_route("/login/"),
+            data=json.dumps({
+                "username": self.test_user['username'],
+                "password": self.test_user['password'],
+                }))
+        data, status = self.get_data_status(res)
+        self.assertIn("token", data)
+        self.assertEqual(status, 200)
+
+    @unittest.skip("STUB")
+    def test_cannot_create_duplicate_user(self):
+        """Should not be able to duplicate usernames or emails"""
+        pass

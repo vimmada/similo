@@ -79,7 +79,6 @@ export default class SavedItemsScreen extends Component {
 
   render() {
     const data = this.state.data;
-
     return (
       <View>
         <FlatList

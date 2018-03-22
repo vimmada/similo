@@ -11,47 +11,70 @@ import { API_SAVED_ITEMS } from '../config/constants';
 
 
 export default class ProductScreen extends Component {
-  static navigationOptions = {
-    title: 'Product Details'
-  };
   constructor(props) {
     super(props);
     this.state = {
       saved: false,
       btext: 'Save Item',
+      id: 0,
     };
     this.saveItem = this.saveItem.bind(this);
   }
 
   saveItem = async () => {
     const userToken = await AsyncStorage.getItem('userToken');
-    this.setState({
-      saved: true,
-      btext: 'Item Saved',
-    });
-    const { params } = this.props.navigation.state;
-    const name = params ? params.name : null;
-    const price = params ? params.price : null;
-    const url = params ? params.url : null;
-    const picture = params ? params.picture : null;
-    fetch(API_SAVED_ITEMS, {
-      method: 'PUT',
-      body: JSON.stringify({
-        item: {
-          title: name,
-          description: 'Description',
-          image_url: picture,
-          product_url: url,
-          price: price,
+    if(this.state.saved){
+      this.setState({
+        saved: false,
+        btext: 'Save Item',
+      });
+      fetch(API_SAVED_ITEMS, {
+        method: 'DELETE',
+        body: JSON.stringify({
+          item_id: this.state.id,
+        }),
+        headers: {
+          'Authorization': userToken,
+          'Content-Type': 'application/json',
         },
-      }),
-      headers: {
-        'Authorization': userToken,
-        'Content-Type': 'application/json',
-      },
-    })
-      .then(res => res.json())
-      .catch(error => console.error('Error:', error))
+      })
+        .then(res => res.json())
+        .catch(error => console.error('Error:', error))
+    }
+    else{
+      this.setState({
+        saved: true,
+        btext: 'Item Saved',
+      });
+      const { params } = this.props.navigation.state;
+      const name = params ? params.name : null;
+      const price = params ? params.price : null;
+      const url = params ? params.url : null;
+      const picture = params ? params.picture : null;
+      fetch(API_SAVED_ITEMS, {
+        method: 'PUT',
+        body: JSON.stringify({
+          item: {
+            title: name,
+            description: 'Description',
+            image_url: picture,
+            product_url: url,
+            price: price,
+          },
+        }),
+        headers: {
+          'Authorization': userToken,
+          'Content-Type': 'application/json',
+        },
+      })
+        .then(res => res.json())
+        .then((data) => {
+          this.setState({
+            id: data.item.item_id,
+          })
+        })
+        .catch(error => console.error('Error:', error))
+    }
   }
 
   render() {

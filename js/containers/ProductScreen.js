@@ -11,9 +11,6 @@ import { API_SAVED_ITEMS } from '../config/constants';
 
 
 export default class ProductScreen extends Component {
-  static navigationOptions = {
-    title: 'Product Details'
-  };
   constructor(props) {
     super(props);
     this.state = {

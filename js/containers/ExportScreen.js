@@ -33,7 +33,6 @@ export default class ExportScreen extends Component {
     fetch(API_EXPORT, {
       method: 'POST',
       header: 'Content-Type: application/json',
-      credentials: 'same-origin',
       body: JSON.stringify({
         email: user_email,
       }),

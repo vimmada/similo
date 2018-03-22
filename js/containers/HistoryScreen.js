@@ -70,7 +70,7 @@ export default class HistoryScreen extends Component {
   render() {
     return (
       <FlatList
-        data={this.data}
+        data={this.state.data}
         renderItem={this._renderItem}
         keyExtractor={this._keyExtractor}
       />

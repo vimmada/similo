@@ -77,17 +77,17 @@ export default class SavedItemsScreen extends Component {
   }
 
   render() {
-    const data = this.data;
+    const data = this.state.data;
     return (
       <View>
-        <Button
-          title="Export Saved Items"
-          onPress={() => { this.export(data) }}
-        />
         <FlatList
           data={data}
           renderItem={this._renderItem}
           keyExtractor={this._keyExtractor}
+        />
+        <Button
+          title="Export Saved Items"
+          onPress={() => { this.export(data) }}
         />
       </View>
     );

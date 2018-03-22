@@ -32,8 +32,7 @@ export default class ProductScreen extends Component {
     const url = params ? params.url : null;
     const picture = params ? params.picture : null;
     fetch(API_SAVED_ITEMS, {
-      method: 'POST',
-      credentials: 'same-origin',
+      method: 'PUT',
       body: JSON.stringify({
         item: {
           title: name,

@@ -25,7 +25,6 @@ def get_words():
         for word in infile:
             word = word.lower()
             words.add(word.strip())
-    #print(words)
     return words
 
 def get_companies():
@@ -54,7 +53,7 @@ def get_saved_items(current_user):
     return make_response(jsonify(**context), 200)
 
 
-@api.route('/items/', methods=["POST"])
+@api.route('/items/', methods=["PUT"])
 @token_required
 def add_saved_item(current_user):
     """
@@ -71,12 +70,20 @@ def add_saved_item(current_user):
                 price
             }
     """
-    if not request.json or 'item' not in request.json:
+    # TODO: Better validation
+    print(str(request))
+    if not request.json \
+        or 'item' not in request.json \
+        or 'title' not in request.json['item'] \
+        or 'description' not in request.json['item'] \
+        or 'image_url' not in request.json['item'] \
+        or 'product_url' not in request.json['item'] \
+        or 'price' not in request.json['item']:
         abort(400)
 
     context = {}
     schema = ItemSchema()
-    item = schema.loads(request.json['item']).data
+    item = Item(**schema.load(request.json['item']).data)
     # Look to see if user has already saved this item
     found_item = None
     for saved in current_user.saved_items:
@@ -92,9 +99,10 @@ def add_saved_item(current_user):
         found_item.image_url = item.image_url
         context["item"] = schema.dump(found_item).data
     else:
-        save_item = SavedItem(**(schema.dump(item)))
+        save_item = SavedItem(**(schema.dump(item).data))
         context["item"] = schema.dump(save_item).data
-        db.session.add(save_item)
+        current_user.saved_items.append(save_item)
+        db.session.add(current_user)
     db.session.commit()
 
     return make_response(jsonify(**context), 201)
@@ -118,9 +126,9 @@ def delete_saved_item(current_user):
         if saved.item_id == item_id:
             db.session.delete(saved)
             db.session.commit()
-            return make_response("Success", 201)
+            return make_response(jsonify({"message": "Success"}), 202)
 
-    return make_response("Item can't be deleted - item not found", 404)
+    return make_response(jsonify({"error": "Item can't be deleted - item not found"}), 404)
 
 
 @api.route('/export_saved/', methods=["POST"])
@@ -206,7 +214,6 @@ def search(current_user):
     data = json.dumps(data)
     results = requests.post(url=('https://vision.googleapis.com/v1/images:annotate?key=' + cred.Google.API_KEY), data=data)
     results = results.json()
-    # print(results)
     labels = results['responses'][0]['labelAnnotations']
     web_entities = results['responses'][0]['webDetection']['webEntities']
     search_terms = []
@@ -295,6 +302,7 @@ def login():
         user = User.query.filter_by(username=username).first()
     elif email:
         user = User.query.filter_by(email=email).first()
+
     if not user:
         # TODO: Handle Error - invalid username/password
         abort(400)
@@ -315,7 +323,7 @@ def login():
 @token_required
 def logout(current_user):
     # TODO: Invalidate token somehow
-    return make_response("Logged out", 200)
+    return make_response(jsonify({"message": "Logged out"}), 200)
 
 
 @api.route('/users/', methods=["POST"])
@@ -330,15 +338,15 @@ def create_user():
         or not 'password' in request.json \
         or not 'firstname' in request.json \
         or not 'lastname' in request.json:
-        abort(400)
+        return jsonify({"error": "invalid format"}), 400
 
     # Check user doesn't already exist
     user = User.query.filter_by(username=request.json['username']).first()
     if user:
-        abort(400)
+        return jsonify({"error": "user already exists"}), 400
     user = User.query.filter_by(email=request.json['email']).first()
     if user:
-        abort(400)
+        return jsonify({"error": "user already exists"}), 400
 
     # Insert user into db
     password_hash = generate_password_hash(request.json['password'])

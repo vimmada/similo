@@ -28,9 +28,9 @@ export default class AuthScreen extends Component {
   authAsync = async () => {
     login.bind(this)(this.state.username, this.state.password)
       .then(res => res.json())
-      .then(async (res) => {
-        if (res.token) {
-          await AsyncStorage.setItem('userToken', res.token);
+      .then(async (data) => {
+        if (data.token) {
+          await AsyncStorage.setItem('userToken', data.token);
           this.props.navigation.navigate('App');
         } else {
           this.setState({ username: '', password: '', statusMsg: 'Invalid credentials.' });

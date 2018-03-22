@@ -53,9 +53,10 @@ export default class SavedItemsScreen extends Component {
   }
 
   export(data) {
-    this.props.navigation.navigate('Export', {
-      exports: data,
-    });
+    // TODO
+    // this.props.navigation.navigate('Export', {
+    //   exports: data,
+    // });
   }
 
   _keyExtractor = (item, index) => item.product_url;

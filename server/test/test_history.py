@@ -8,15 +8,17 @@ class TestHistory(BaseTest):
     Tests History operations:
         GET         /history/
     """
+    @unittest.skip("STUB")
     def test_can_get_history(self):
         """Can get search history of user"""
         image = b'hello world'
         image_64 = base64.b64encode(image).decode('ascii')
 
-        self.create_user()
+        user = self.create_user(test_user1)
         res = self.post(
             path=self.make_route("/search/"),
-            data=json.dumps({"image": image_64}))
+            data=json.dumps({"image": image_64}),
+            user=user)
 
         res = self.get(
             path=self.make_route("/history/"))

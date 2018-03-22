@@ -1,6 +1,7 @@
 import unittest
 import json
 from test.base import BaseTest
+from test.examples import test_user1
 
 class TestUser(BaseTest):
     """
@@ -19,19 +20,19 @@ class TestUser(BaseTest):
         """Can create user"""
         res = self.post(
             path=self.make_route("/users/"),
-            data=json.dumps(self.test_user))
+            data=json.dumps(test_user1))
         data, status = self.get_data_status(res)
         self.assertIn("token", data)
         self.assertEqual(status, 201)
 
     def test_can_login_user(self):
         """User can login"""
-        self.create_user()
+        self.create_user(test_user1)
         res = self.post(
             path=self.make_route("/login/"),
             data=json.dumps({
-                "username": self.test_user['username'],
-                "password": self.test_user['password'],
+                "username": test_user1['username'],
+                "password": test_user1['password']
                 }))
         data, status = self.get_data_status(res)
         self.assertIn("token", data)

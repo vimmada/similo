@@ -22,11 +22,16 @@ export default class SavedItemsScreen extends Component {
     }
     this.selectItem = this.selectItem.bind(this);
     this._export = this._export.bind(this);
+    this.getSavedItems = this.getSavedItems.bind(this);
 
     this.props.navigation.setParams({ selectItem: this.selectItem });
   }
 
   componentDidMount() {
+    this.getSavedItems();
+  }
+
+  getSavedItems() {
     AsyncStorage.getItem('userToken')
       .then(userToken => {
         fetch(API_SAVED_ITEMS, { headers: { 'Authorization': userToken }})
@@ -50,6 +55,8 @@ export default class SavedItemsScreen extends Component {
       picture: item['image_url'],
       item_id: item['item_id'],
       saved: true,
+      navigateFromSavedItems: true,
+      refresh: () => this.getSavedItems(),
     });
   }
 

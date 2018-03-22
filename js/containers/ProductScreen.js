@@ -22,6 +22,8 @@ export default class ProductScreen extends Component {
 
   saveItem = async () => {
     const userToken = await AsyncStorage.getItem('userToken');
+    const { params } = this.props.navigation.state;
+
     if(this.state.saved){
       this.setState({
         saved: false,
@@ -37,6 +39,7 @@ export default class ProductScreen extends Component {
         },
       })
         .then(res => res.json())
+        .then(() => params.navigateFromSavedItems ? params.refresh() : null)
         .catch(error => console.error('Error:', error))
     }
     else{
@@ -70,6 +73,7 @@ export default class ProductScreen extends Component {
             id: data.item.item_id,
           })
         })
+        .then(() => params.navigateFromSavedItems ? params.refresh() : null)
         .catch(error => console.error('Error:', error))
     }
   }

@@ -71,6 +71,7 @@ def add_saved_item(current_user):
             }
     """
     # TODO: Better validation
+    print(str(request))
     if not request.json \
         or 'item' not in request.json \
         or 'title' not in request.json['item'] \

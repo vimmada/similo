@@ -1,7 +1,7 @@
 import { AsyncStorage } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 
-import { API_ENDPOINT_AUTH, API_ENDPOINT_SEARCH, API_ENDPOINT_USERS, TEST_EMAIL, CROP_WIDTH, CROP_HEIGHT } from '../config/constants';
+import { API_ENDPOINT_AUTH, API_ENDPOINT_SEARCH, API_ENDPOINT_USERS, CROP_WIDTH, CROP_HEIGHT } from '../config/constants';
 
 const photoOptions = {
   cropping: true,
@@ -12,7 +12,7 @@ const photoOptions = {
   mediaType: 'photo',
 };
 
-async function uploadPhoto(photo) {
+export async function uploadPhoto(photo) {
   this.props.navigation.navigate('Buffer', { photo });
 
   const userToken = await AsyncStorage.getItem('userToken');
@@ -20,7 +20,6 @@ async function uploadPhoto(photo) {
   return fetch(API_ENDPOINT_SEARCH, {
     method: 'POST',
     body: JSON.stringify({
-      email: TEST_EMAIL,
       image: photo.data, // base64 representation
     }),
     headers: {

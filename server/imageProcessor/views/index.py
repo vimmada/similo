@@ -16,7 +16,7 @@ from imageProcessor.model import db
 from imageProcessor.models import Item, ItemSchema, SavedItem, User, SearchLog, SearchLogSchema
 from imageProcessor.auth import token_required
 from common import cred, constants, util
-
+from imageProcessor.recommendation import Recommender
 api = Blueprint('views', __name__, url_prefix="/api")
 
 def get_words():

@@ -49,7 +49,7 @@ export default class BufferScreen extends Component {
             blurRadius={4}
             resizeMode="contain"
             style={{ width, height }}
-            source={{ uri: photo.path }}
+            source={{ uri: `data:image/png;base64,${photo.data}` }}
         >
           <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center',
                          width, height, backgroundColor: 'rgba(0, 0, 0, 0.6)' }}>

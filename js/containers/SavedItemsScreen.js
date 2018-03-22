@@ -21,13 +21,17 @@ export default class SavedItemsScreen extends Component {
       data: []
     }
     this.selectItem = this.selectItem.bind(this);
-    this.export = this.export.bind(this);
+    this._export = this._export.bind(this);
+    this.getSavedItems = this.getSavedItems.bind(this);
 
     this.props.navigation.setParams({ selectItem: this.selectItem });
-
   }
 
   componentDidMount() {
+    this.getSavedItems();
+  }
+
+  getSavedItems() {
     AsyncStorage.getItem('userToken')
       .then(userToken => {
         fetch(API_SAVED_ITEMS, { headers: { 'Authorization': userToken }})
@@ -49,13 +53,18 @@ export default class SavedItemsScreen extends Component {
       price: item['price'],
       url: item['product_url'],
       picture: item['image_url'],
+      item_id: item['item_id'],
+      saved: true,
+      navigateFromSavedItems: true,
+      refresh: () => this.getSavedItems(),
     });
   }
 
-  export(data) {
-    this.props.navigation.navigate('Export', {
-      exports: data,
-    });
+  _export(data) {
+    // TODO
+    // this.props.navigation.navigate('Export', {
+    //   exports: data,
+    // });
   }
 
   _keyExtractor = (item, index) => item.product_url;
@@ -77,17 +86,17 @@ export default class SavedItemsScreen extends Component {
   }
 
   render() {
-    const data = this.data;
+    const data = this.state.data;
     return (
       <View>
-        <Button
-          title="Export Saved Items"
-          onPress={() => { this.export(data) }}
-        />
         <FlatList
           data={data}
           renderItem={this._renderItem}
           keyExtractor={this._keyExtractor}
+        />
+        <Button
+          title="Export Saved Items"
+          onPress={() => { this._export(data) }}
         />
       </View>
     );

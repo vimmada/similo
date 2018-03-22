@@ -11,48 +11,71 @@ import { API_SAVED_ITEMS } from '../config/constants';
 
 
 export default class ProductScreen extends Component {
-  static navigationOptions = {
-    title: 'Product Details'
-  };
   constructor(props) {
     super(props);
     this.state = {
-      saved: false,
-      btext: 'Save Item',
+      saved: !!this.props.navigation.state.params.saved,
+      id: this.props.navigation.state.params.item_id,
     };
     this.saveItem = this.saveItem.bind(this);
   }
 
   saveItem = async () => {
     const userToken = await AsyncStorage.getItem('userToken');
-    this.setState({
-      saved: true,
-      btext: 'Item Saved',
-    });
     const { params } = this.props.navigation.state;
-    const name = params ? params.name : null;
-    const price = params ? params.price : null;
-    const url = params ? params.url : null;
-    const picture = params ? params.picture : null;
-    fetch(API_SAVED_ITEMS, {
-      method: 'POST',
-      credentials: 'same-origin',
-      body: JSON.stringify({
-        item: {
-          title: name,
-          description: 'Description',
-          image_url: picture,
-          product_url: url,
-          price: price,
+
+    if(this.state.saved){
+      this.setState({
+        saved: false,
+      });
+      fetch(API_SAVED_ITEMS, {
+        method: 'DELETE',
+        body: JSON.stringify({
+          item_id: this.state.id,
+        }),
+        headers: {
+          'Authorization': userToken,
+          'Content-Type': 'application/json',
         },
-      }),
-      headers: {
-        'Authorization': userToken,
-        'Content-Type': 'application/json',
-      },
-    })
-      .then(res => res.json())
-      .catch(error => console.error('Error:', error))
+      })
+        .then(res => res.json())
+        .then(() => params.navigateFromSavedItems ? params.refresh() : null)
+        .catch(error => console.error('Error:', error))
+    }
+    else{
+      this.setState({
+        saved: true,
+      });
+      const { params } = this.props.navigation.state;
+      const name = params ? params.name : null;
+      const price = params ? params.price : null;
+      const url = params ? params.url : null;
+      const picture = params ? params.picture : null;
+      fetch(API_SAVED_ITEMS, {
+        method: 'PUT',
+        body: JSON.stringify({
+          item: {
+            title: name,
+            description: 'Description',
+            image_url: picture,
+            product_url: url,
+            price: price,
+          },
+        }),
+        headers: {
+          'Authorization': userToken,
+          'Content-Type': 'application/json',
+        },
+      })
+        .then(res => res.json())
+        .then((data) => {
+          this.setState({
+            id: data.item.item_id,
+          })
+        })
+        .then(() => params.navigateFromSavedItems ? params.refresh() : null)
+        .catch(error => console.error('Error:', error))
+    }
   }
 
   render() {
@@ -77,7 +100,7 @@ export default class ProductScreen extends Component {
         <Text style={{fontSize: 20}}> {Price} </Text>
         <Text style={{fontSize: 15, padding: 15, color: '#4285f4'}} onPress={() => Linking.openURL(url)}>Go to product webpage.</Text>
         <Button
-          title={this.state.btext}
+          title={this.state.saved ? 'Item Saved' : 'Save Item'}
           onPress={() => { this.saveItem() }}
         />
       </View>

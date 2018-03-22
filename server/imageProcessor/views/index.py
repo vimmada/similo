@@ -14,6 +14,7 @@ import re
 from imageProcessor.model import db
 from imageProcessor.models import Item, ItemSchema, SavedItem, User, SearchLog, SearchLogSchema
 from imageProcessor.auth import token_required
+from imageProcessor.recommendation import Recommender
 from common import cred, constants, util
 
 index_bp = Blueprint('index_bp', __name__)
@@ -245,7 +246,9 @@ def search(current_user):
         search_terms.insert(0, logo)
 
     keywords = search_terms
-
+    MAX_NUMBER_KEYWORDS = 5
+    keywords = keywords[:MAX_NUMBER_KEYWORDS]
+        
     # 3. Uses amazon's search engine to get the item details
     amazon = bottlenose.Amazon(
             cred.Amazon.ACCESS_KEY,

@@ -4,12 +4,14 @@ import flask
 from werkzeug.wsgi import DispatcherMiddleware
 from imageProcessor.model import db
 from imageProcessor.config import app_config
-from imageProcessor.views import api
+from imageProcessor.views import index_bp
+from imageProcessor.auth import auth_bp
 
 def create_app(config_name):
     app = flask.Flask(__name__)
     app.config.from_object(app_config[config_name])
-    app.register_blueprint(api)
+    app.register_blueprint(index_bp)
+    app.register_blueprint(auth_bp)
 
     # Make directory for db when using sqlite3 in dev or testing
     if app.config.get("TESTING") or app.config.get("DEV"):

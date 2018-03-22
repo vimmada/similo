@@ -71,6 +71,7 @@ def add_saved_item(current_user):
             }
     """
     # TODO: Better validation
+    print(str(request))
     if not request.json \
         or 'item' not in request.json \
         or 'title' not in request.json['item'] \
@@ -245,7 +246,9 @@ def search(current_user):
         search_terms.insert(0, logo)
 
     keywords = search_terms
-
+    MAX_NUMBER_KEYWORDS = 5
+    keywords = keywords[:MAX_NUMBER_KEYWORDS]
+        
     # 3. Uses amazon's search engine to get the item details
     amazon = bottlenose.Amazon(
             cred.Amazon.ACCESS_KEY,

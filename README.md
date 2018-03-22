@@ -21,7 +21,7 @@ Similo is for fashion enthusiasts looking to draw inspiration from others’ out
 In __another__ terminal:
 ```
 cd $SIMILO/server
-virtualenv venv
+virtualenv -p python3 venv
 source venv/bin/activate
 pip install -r requirements.txt
 chmod +x ./bin/image-processorrun

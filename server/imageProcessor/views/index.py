@@ -25,7 +25,6 @@ def get_words():
         for word in infile:
             word = word.lower()
             words.add(word.strip())
-    #print(words)
     return words
 
 def get_companies():
@@ -126,9 +125,9 @@ def delete_saved_item(current_user):
         if saved.item_id == item_id:
             db.session.delete(saved)
             db.session.commit()
-            return make_response("Success", 201)
+            return make_response(jsonify({"message": "Success"}), 202)
 
-    return make_response("Item can't be deleted - item not found", 404)
+    return make_response(jsonify({"error": "Item can't be deleted - item not found"}), 404)
 
 
 @api.route('/export_saved/', methods=["POST"])
@@ -302,6 +301,7 @@ def login():
         user = User.query.filter_by(username=username).first()
     elif email:
         user = User.query.filter_by(email=email).first()
+
     if not user:
         # TODO: Handle Error - invalid username/password
         abort(400)
@@ -322,7 +322,7 @@ def login():
 @token_required
 def logout(current_user):
     # TODO: Invalidate token somehow
-    return make_response("Logged out", 200)
+    return make_response(jsonify({"message": "Logged out"}), 200)
 
 
 @api.route('/users/', methods=["POST"])
@@ -337,15 +337,15 @@ def create_user():
         or not 'password' in request.json \
         or not 'firstname' in request.json \
         or not 'lastname' in request.json:
-        abort(400)
+        return jsonify({"error": "invalid format"}), 400
 
     # Check user doesn't already exist
     user = User.query.filter_by(username=request.json['username']).first()
     if user:
-        abort(400)
+        return jsonify({"error": "user already exists"}), 400
     user = User.query.filter_by(email=request.json['email']).first()
     if user:
-        abort(400)
+        return jsonify({"error": "user already exists"}), 400
 
     # Insert user into db
     password_hash = generate_password_hash(request.json['password'])

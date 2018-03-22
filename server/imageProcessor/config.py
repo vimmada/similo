@@ -7,6 +7,7 @@ class Config:
     Parent configruation class
     """
     DEBUG = False
+    DEV = False
     # Database file is var/insta485.sqlite3
     DATABASE_FILENAME = os.path.join(
         os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
@@ -21,12 +22,23 @@ class DevelopmentConfig(Config):
     Configurations for development
     """
     DEBUG = True
+    DEV = True
 
 class ProductionConfig(Config):
     DEBUG = False
     TESTING = False
 
+class TestingConfig(Config):
+    TESTING = True
+
+    DATABASE_FILENAME = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
+        'var', 'test_db.sqlite3'
+    )
+    SQLALCHEMY_DATABASE_URI = "".join(["sqlite:///", DATABASE_FILENAME])
+
 app_config = {
         "development": DevelopmentConfig,
-        "production": ProductionConfig
+        "production": ProductionConfig,
+        "testing": TestingConfig
         }

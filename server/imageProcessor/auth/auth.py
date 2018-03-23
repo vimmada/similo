@@ -8,8 +8,8 @@ def token_required(f):
     @wraps(f)
     def auth(*args, **kwargs):
         if not 'Authorization' in request.headers:
-            current_app.logger.info("Request missing token")
-            return Response.error("Token is missing.", 401)
+            current_app.logger.info("Token missing")
+            return Response.error("Token is missing.", 403)
         token = request.headers['Authorization']
         token = str.replace(str(token), 'Bearer ', '')
         try:
@@ -27,7 +27,7 @@ def token_required(f):
 
         if not user:
             current_app.logger.info("Failed to authenticate token: {}".format(payload))
-            return Response.error("User not found", 401)
+            return Response.error("User not found", 403)
 
         return f(user, *args, **kwargs)
     return auth

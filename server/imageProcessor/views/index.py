@@ -170,7 +170,13 @@ def search(current_user):
 
     image = request.json['image']
     # 1. Add it to history of searches
-    search = SearchLog(image=base64.b64decode(image),
+    try:
+        decoded = base64.b64decode(image)
+    except Exception as e:
+        app.logger.error("Image could not be decoded: {}".format(e))
+        return Response.error("Image could not be decoded. Make sure it is base64-ascii encoded", 400)
+
+    search = SearchLog(image=decoded,
                        date_created=datetime.datetime.now(),
                        user_id=current_user.user_id)
     db.session.add(search)

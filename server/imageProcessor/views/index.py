@@ -1,21 +1,19 @@
 """ImageProcessor index (main) view."""
-from flask import (session, redirect, url_for, request, abort, render_template,
-                   send_from_directory, jsonify, make_response)
-from flask.blueprints import Blueprint
+from flask import request, Blueprint
+from flask import current_app as app
 import requests
 import datetime
 import json
-import bottlenose
-import pdb
+import re
 import base64
 from bs4 import BeautifulSoup
-import re
+import bottlenose
 
 from imageProcessor.model import db
 from imageProcessor.models import Item, ItemSchema, SavedItem, User, SearchLog, SearchLogSchema
 from imageProcessor.auth import token_required
 from imageProcessor.recommendation import Recommender
-from common import cred, constants, util
+from imageProcessor.common import cred, constants, Response
 
 index_bp = Blueprint('index_bp', __name__)
 
@@ -37,7 +35,7 @@ def get_companies():
 
 @index_bp.route('/')
 def hello_world():
-    return make_response(jsonify({"message" : "hello world"}))
+    return Response.success("hello world", 200)
 
 
 @index_bp.route('/items/', methods=["GET"])
@@ -50,7 +48,7 @@ def get_saved_items(current_user):
     schema = ItemSchema(many=True)
     context = {}
     context["items"] = schema.dump(saved_items).data
-    return make_response(jsonify(**context), 200)
+    return Response.success(context, 200)
 
 
 @index_bp.route('/items/', methods=["PUT"])
@@ -58,17 +56,9 @@ def get_saved_items(current_user):
 def add_saved_item(current_user):
     """
     Add an item to the user's saved items list and sends item back with
-    newly generated itemID.
+    newly generated item_id.
 
     Product url is the unique identifier
-
-    Item to add should have the following data:
-    "item": {   title
-                description
-                image_url
-                product_url
-                price
-            }
     """
     # TODO: Better validation
     if not request.json \
@@ -78,7 +68,7 @@ def add_saved_item(current_user):
         or 'image_url' not in request.json['item'] \
         or 'product_url' not in request.json['item'] \
         or 'price' not in request.json['item']:
-        abort(400)
+        return Response.error("Missing fields", 400)
 
     context = {}
     schema = ItemSchema()
@@ -104,7 +94,7 @@ def add_saved_item(current_user):
         db.session.add(current_user)
     db.session.commit()
 
-    return make_response(jsonify(**context), 201)
+    return Response.success(context, 201)
 
 
 @index_bp.route('/items/', methods=["DELETE"])
@@ -118,28 +108,25 @@ def delete_saved_item(current_user):
     }
     """
     if not request.json or 'item_id' not in request.json:
-        abort(400)
+        return Response.error("Missing fields", 400)
 
     item_id = request.json['item_id']
     for saved in current_user.saved_items:
         if saved.item_id == item_id:
             db.session.delete(saved)
             db.session.commit()
-            return make_response(jsonify({"message": "Success"}), 202)
-
-    return make_response(jsonify({"error": "Item can't be deleted - item not found"}), 404)
+            return Response.success("item deleted", 202)
+    return Response.error("Item not found", 404)
 
 
 @index_bp.route('/export_saved/', methods=["POST"])
 @token_required
 def export_saved(current_user):
     """
-    Request json should have: {
-        'email': email
-    }
+    Sends an email to user with their saved items
     """
     context = {}
-    return make_response(jsonify(**context), 201)
+    return Response.error("Not implemented", 501)
 
 
 @index_bp.route('/history/', methods=["GET"])
@@ -149,7 +136,7 @@ def get_history(current_user):
     search_history = current_user.prev_searches
     schema = SearchLogSchema(many=True)
     context["history"] = schema.dump(search_history).data
-    return make_response(jsonify(**context), 200)
+    return Response.error(context, 200)
 
 
 CLOTHING_WORDS = get_words()
@@ -176,15 +163,10 @@ def search(current_user):
     - Add image to history of searches
     - Purge user search history of > KEEP_HISTORY most recent items
     - Returns json of items(item_name, description, price, and link)
-
-    Request JSON should have: {
-        'email': email
-        'image': base64 encoding of the image
-    }
     """
     context = {}
     if not request.json or not "image" in request.json:
-        abort(400)
+        return Response.error("Missing fields", 400)
 
     image = request.json['image']
     # 1. Add it to history of searches
@@ -228,11 +210,8 @@ def search(current_user):
     results = results.json()
     google_response = results['responses'][0]
     if 'error' in google_response:
-        context = {
-            'items': [],
-            'error': google_response['error']
-        }
-        return make_response(jsonify(**context), 401)
+        app.logger.error("Google Cloud Error {}".format(google_response['error']))
+        return Response.error(google_response['error'], 400)
 
     labels = google_response['labelAnnotations']
     web_entities = google_response['webDetection']['webEntities']
@@ -286,4 +265,4 @@ def search(current_user):
     schema = ItemSchema(many=True)
     items_dict = schema.dump(items)
     context["items"] = items_dict.data
-    return make_response(jsonify(**context), 201)
+    return Response.success(context, 201)

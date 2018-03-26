@@ -21,7 +21,7 @@ class BaseTest(unittest.TestCase):
     - app = Flask application
     - client = Client of flask application
     """
-    url_prefix = "/api"
+    url_prefix = ""
 
     def setUp(self):
         """Executed by unittest before every test"""

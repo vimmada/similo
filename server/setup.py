@@ -16,6 +16,9 @@ setup(
         'bottlenose',
         'bs4',
         'marshmallow',
-        'lxml'
+        'lxml',
+        'FLask-SQLAlchemy',
+        'nltk',
+        'PyJWT'
     ],
 )

@@ -2,6 +2,7 @@ import unittest
 import json
 import base64
 from test.base import BaseTest
+from test.examples import test_user1, test_user2
 
 class TestHistory(BaseTest):
     """

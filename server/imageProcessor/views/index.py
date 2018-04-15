@@ -6,14 +6,13 @@ import datetime
 import json
 import re
 import base64
-from bs4 import BeautifulSoup
-import bottlenose
 
 from imageProcessor.model import db
 from imageProcessor.models import Item, ItemSchema, SavedItem, User, SearchLog, SearchLogSchema
 from imageProcessor.auth import token_required
 from imageProcessor.recommendation import Recommender
-from imageProcessor.common import cred, constants, Response
+from imageProcessor.common import cred, Response
+from imageProcessor.search import ProductSearcher
 
 index_bp = Blueprint('index_bp', __name__)
 
@@ -35,7 +34,7 @@ def get_companies():
 
 @index_bp.route('/')
 def hello_world():
-    return Response.success("hello world", 200)
+    return Response.success("You've reached the Similo API!", 200)
 
 
 @index_bp.route('/items/', methods=["GET"])
@@ -234,41 +233,12 @@ def search(current_user):
     MAX_NUMBER_KEYWORDS = 5
     keywords = keywords[:MAX_NUMBER_KEYWORDS]
         
-    # 3. Uses amazon's search engine to get the item details
-    amazon = bottlenose.Amazon(
-            cred.Amazon.ACCESS_KEY,
-            cred.Amazon.SECRET_KEY,
-            cred.Amazon.ASSOCIATE_ID,
-            Parser=lambda text: BeautifulSoup(text, 'xml'))
-    res = amazon.ItemSearch(
-            Keywords= " ".join(keywords),
-            ResponseGroup="Images,ItemAttributes",
-            SearchIndex="Fashion")
-
-    MAX_ITEMS = 10
-    items = []
-    # Parse response XML
-    for (item, i) in zip(res.find_all("Item"), range(0, MAX_ITEMS)):
-        title = ""
-        image_url = ""
-        product_url = ""
-        price = 0
-
-        if item.find("Title"):
-            title = item.find("Title").text
-        if item.find("LargeImage"):
-            image_url = item.find("LargeImage").URL.text
-        if item.find("DetailPageURL"):
-            product_url = item.find("DetailPageURL").text
-        if item.find("Amount"):
-            price = int(item.find("Amount").text)
-        items.append(Item(title=title,
-                          image_url=image_url,
-                          product_url=product_url,
-                          price=price))
+    total_results_found, items = ProductSearcher().get_found_items(keywords)
 
     # Returns json of items(title, image_url, product_url, price)
     schema = ItemSchema(many=True)
     items_dict = schema.dump(items)
     context["items"] = items_dict.data
+    context["total_returned"] = len(items)
+    context["total_results"] = total_results_found
     return Response.success(context, 201)

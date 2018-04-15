@@ -20,6 +20,12 @@ const styles = StyleSheet.create({
 });
 
 export default class HomeScreen extends Component {
+  constructor(props) {
+    super(props);
+
+    global.HOME_KEY = props.navigation.state.key;
+  }
+
   static navigationOptions = {
     title: 'Similo',
   };

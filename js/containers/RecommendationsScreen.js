@@ -8,11 +8,36 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { ListItem } from 'react-native-elements';
+import { NavigationActions } from 'react-navigation';
+import Icon from 'react-native-vector-icons/FontAwesome';
+
+import { colors } from '../config/styles';
+
+const { SIMILO_BLUE } = colors;
 
 export default class RecommendationsScreen extends Component {
-  static navigationOptions = {
-    title: 'Recommendations'
-  };
+  static navigationOptions = ({ navigation }) => ({
+    title: 'Recommendations',
+    headerLeft: (
+      <TouchableOpacity
+        onPress={() => {
+          const resetAction = NavigationActions.reset({
+            index: 0,
+            actions: [NavigationActions.navigate({ routeName: 'Home' })],
+          });
+
+          navigation.dispatch(resetAction);
+        }}
+        style={{ marginLeft: 20 }}
+      >
+        <Icon name="home" size={24} color={SIMILO_BLUE} />
+      </TouchableOpacity>
+    ),
+    headerTitleStyle: {
+      alignSelf: 'center',
+    },
+  });
+
   constructor(props) {
     super(props);
 

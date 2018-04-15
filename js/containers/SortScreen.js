@@ -1,31 +1,13 @@
 import React, { Component } from 'react';
-import {
-  StyleSheet,
-  Image,
-  View,
-  FlatList,
-  Text,
-  TouchableOpacity,
-} from 'react-native';
-import { ListItem } from 'react-native-elements';
+import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
 
-export default class RecommendationsScreen extends Component {
-  static navigationOptions = {
-    title: 'Recommendations'
-  };
+
+export default class SortScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
       sort_order = 0,
-      keywords = [],
-      min_price = 0,
-      max_price = 9999999999,
-      items = [],
     }
-    this.selectItem = this.selectItem.bind(this);
-
-    this.props.navigation.setParams({ selectItem: this.selectItem });
-
   }
 
   selectItem(item) {
@@ -33,7 +15,7 @@ export default class RecommendationsScreen extends Component {
     if (!picture) {
       picture = 'http://vollrath.com/ClientCss/images/VollrathImages/No_Image_Available.jpg'
     }
-    this.props.navigation.navigate('Product', {
+    this.props.navigation.navigate('Recommendations', {
       picture: picture,
       name: item['title'],
       price: item['price'],

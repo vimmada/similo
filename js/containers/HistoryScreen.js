@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { ListItem } from 'react-native-elements';
-import { API_HISTORY, TEST_EMAIL } from '../config/constants';
+import { API_HISTORY } from '../config/constants';
 
 import { uploadPhoto } from '../lib';
 
@@ -20,9 +20,9 @@ export default class HistoryScreen extends Component {
       data: []
     }
 
-    this.selectItem = this.selectItem.bind(this);
+    this.searchItem = this.searchItem.bind(this);
 
-    this.props.navigation.setParams({ selectItem: this.selectItem });
+    this.props.navigation.setParams({ searchItem: this.searchItem });
   }
 
   componentDidMount() {
@@ -42,7 +42,7 @@ export default class HistoryScreen extends Component {
       });
   }
 
-  selectItem(item) {
+  searchItem(item) {
     uploadPhoto.call(this, { data: item.image });
   }
 
@@ -50,22 +50,52 @@ export default class HistoryScreen extends Component {
 
   _renderItem = ({item}) => {
     return (
-      <ListItem
+      <TouchableOpacity onPress={this.searchItem(item)}>
+        <View>
+          <Image
+            style={styles.logo}
+            source={{uri: `data:image/png;base64,${item.image}`}}>
+          </Image>
+          <Text style={{textAlign: 'center'}}> Searched on {item.date_created} </Text>
+        </View>
+      </TouchableOpacity>
+
+      /*<ListItem
         avatar={{ uri: `data:image/png;base64,${item.image}` }}
         title={`Searched on ${item.date_created}`}
         key={item.dateCreated}
-        onPress={() => this.selectItem(item)}
-      />
+        onPress={() => this.searchItem(item)}
+      />*/
     );
   };
 
   render() {
     return (
-      <FlatList
-        data={this.state.data}
-        renderItem={this._renderItem}
-        keyExtractor={this._keyExtractor}
-      />
-    );
+      <View style={styles.container}>
+        <FlatList
+          horizontal={false}
+          numColumns={2}
+          data={this.state.data}
+          renderItem={this._renderItem}
+          keyExtractor={this._keyExtractor}
+        />
+      </View>
+    \);
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: Constants.statusBarHeight,
+    backgroundColor: '#ecf0f1',
+  },
+  logo: {
+    backgroundColor: '#056ecf',
+    height: 220,
+    width: 180,
+    margin: 5,
+  },
+});

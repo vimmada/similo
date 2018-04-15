@@ -10,7 +10,7 @@ import {
   Button,
 } from 'react-native';
 import { ListItem } from 'react-native-elements';
-import { API_SAVED_ITEMS, TEST_EMAIL } from '../config/constants';
+import { API_SAVED_ITEMS } from '../config/constants';
 
 
 export default class SavedItemsScreen extends Component {
@@ -48,11 +48,15 @@ export default class SavedItemsScreen extends Component {
   }
 
   selectItem(item) {
+    var picture = item['image_url'];
+    if (!picture) {
+      picture = 'http://vollrath.com/ClientCss/images/VollrathImages/No_Image_Available.jpg'
+    }
     this.props.navigation.navigate('Product', {
       name: item['title'],
       price: item['price'],
       url: item['product_url'],
-      picture: item['image_url'],
+      picture: picture,
       item_id: item['item_id'],
       saved: true,
       navigateFromSavedItems: true,
@@ -73,32 +77,74 @@ export default class SavedItemsScreen extends Component {
     var pnum = item['price'].toString();
     var dollar = pnum.substring(0, pnum.length - 2);
     var cents = pnum.substring(pnum.length-2, pnum.length);
-    var price = "$" + dollar + "." + cents;
+    var price = "$";
+    if (pnum.length === 1) {
+      price = price + dollar;
+    }
+    else {
+      price = price  + dollar + "." + cents;
+    }
+    var picture = item['image_url'];
+    if (!picture) {
+      picture = 'http://vollrath.com/ClientCss/images/VollrathImages/No_Image_Available.jpg'
+    }
     return (
-      <ListItem
+      <TouchableOpacity onPress={this.selectItem(item)}>
+        <View>
+          <Image style={styles.logo} source={{uri: picture)}>
+          </Image>
+        </View>
+      </TouchableOpacity>
+      /*<ListItem
         key={item['image_url']}
         title={item['title']}
         subtitle={price}
-        avatar={{uri:item['image_url']}}
+        avatar={{uri:picture}}
         onPress={() => this.selectItem(item)}
-      />
+      />*/
     );
-  }
+  };
 
   render() {
     const data = this.state.data;
-    return (
-      <View>
-        <FlatList
-          data={data}
-          renderItem={this._renderItem}
-          keyExtractor={this._keyExtractor}
-        />
-        <Button
-          title="Export Saved Items"
-          onPress={() => { this._export(data) }}
-        />
-      </View>
-    );
+    if (data) {
+      return (
+        <View style={styles.container}>
+          <FlatList
+            horizontal={false}
+            numColumns={2}
+            data={data}
+            renderItem={this._renderItem}
+            keyExtractor={this._keyExtractor}
+          />
+          <Button
+            title="Export Saved Items"
+            onPress={() => { this._export(data) }}
+          />
+        </View>
+      );
+    }
+    else {
+      return (
+        <View style={styles.container}>
+          <Text> No Saved Items </Text>
+        </View>
+      );
+    }
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: Constants.statusBarHeight,
+    backgroundColor: '#ecf0f1',
+  },
+  logo: {
+    height: 220,
+    width: 180,
+    margin: 5,
+  },
+});

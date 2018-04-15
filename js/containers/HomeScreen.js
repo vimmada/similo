@@ -30,7 +30,7 @@ export default class HomeScreen extends Component {
           onPress={() => this.props.navigation.navigate('SavedItems')}
         />
         <Button
-          title="History"
+          title="Previous Searches"
           onPress={() => this.props.navigation.navigate('History')}
         />
         <Button

@@ -51,7 +51,7 @@ const AppNavigator = StackNavigator(
 const AuthNavigator = StackNavigator(
   {
     Login: {
-      screen: AuthScreen
+      screen: AuthScreen,
     },
     CreateAccount: {
       screen: CreateAccountScreen,
@@ -59,7 +59,7 @@ const AuthNavigator = StackNavigator(
   },
   {
     initialRouteName: 'Login',
-  }
+  },
 );
 
 const RootNavigator = SwitchNavigator(

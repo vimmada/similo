@@ -1,6 +1,7 @@
-const DEV = 'http://localhost:8000/api';
+// const DEV = 'http://localhost:8000/api';
+const DEV = 'http://10.0.2.2:8000';
 const PROD = 'http://api.similo.xyz';
-const url = PROD;
+const url = DEV;
 
 export const API_SAVED_ITEMS     = `${url}/items/`;
 export const API_EXPORT          = `${url}/export_saved/`;

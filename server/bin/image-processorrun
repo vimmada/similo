@@ -5,4 +5,5 @@ export FLASK_DEBUG=True
 export FLASK_APP=imageProcessor/run.py
 export APP_SETTINGS=development
 
-flask run --host 0.0.0.0 --port 8000
+# flask run --host 0.0.0.0 --port 8000
+flask run --host 127.0.0.1 --port 8000

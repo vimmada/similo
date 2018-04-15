@@ -45,6 +45,7 @@ def logout(current_user):
 
 @auth_bp.route('/users/', methods=["POST"])
 def create_user():
+    print('@@@@@@@@@@@@@@@a')
     """
     Creates a user and returns a jwt for future authenticated requests
     """

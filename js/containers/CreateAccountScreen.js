@@ -1,15 +1,31 @@
 import React, { Component } from 'react';
-import { AsyncStorage, Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { AsyncStorage, Button, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { colors } from '../config/styles';
 
 import { createAccount } from '../lib';
 
+const { SIMILO_BLUE } = colors;
+
 const styles = StyleSheet.create({
   input: {
+    color: '#FFFFFF',
+    width: '80%',
     borderWidth: 1,
     fontSize: 20,
-    height: 40,
+    height: 50,
     marginBottom: 20,
+    borderRadius: 10,
+    borderColor: '#FFFFFF',
   },
+  touchableMenuItem: {
+    width: '80%',
+    marginBottom: 30,
+  },
+  menuText: {
+    fontSize: 24,
+    color: '#FFFFFF',
+  }
 });
 
 export default class CreateAccountScreen extends Component {
@@ -24,8 +40,8 @@ export default class CreateAccountScreen extends Component {
       username: '',
       email: '',
       password: '',
-      firstname: '',
-      lastname: '',
+      firstname: 'firstname',
+      lastname: 'lastname',
       statusMsg: '',
     };
 
@@ -77,7 +93,7 @@ export default class CreateAccountScreen extends Component {
 
   render() {
     return (
-      <View style={{ padding: 10 }}>
+      <View style={{ flex: 1, flexDirection: 'column', alignItems: 'center', justifyContent: 'center', backgroundColor: '#4285f4', padding: 10 }}>
         <TextInput
           autoCapitalize="none"
           autoCorrect={false}
@@ -86,6 +102,7 @@ export default class CreateAccountScreen extends Component {
           style={styles.input}
           value={this.state.username}
           onChangeText={username => this.setState({ username })}
+          placeholderTextColor='#FFFFFF'
         />
         <TextInput
           autoCapitalize="none"
@@ -94,6 +111,7 @@ export default class CreateAccountScreen extends Component {
           style={styles.input}
           value={this.state.email}
           onChangeText={email => this.setState({ email })}
+          placeholderTextColor='#FFFFFF'
         />
         <TextInput
           placeholder="password"
@@ -101,23 +119,22 @@ export default class CreateAccountScreen extends Component {
           style={styles.input}
           value={this.state.password}
           onChangeText={password => this.setState({ password })}
-        />
-        <TextInput
-          autoCorrect={false}
-          placeholder="First name"
-          style={styles.input}
-          value={this.state.firstname}
-          onChangeText={firstname => this.setState({ firstname })}
-        />
-        <TextInput
-          autoCorrect={false}
-          placeholder="Last name"
-          style={styles.input}
-          value={this.state.lastname}
-          onChangeText={lastname => this.setState({ lastname })}
+          placeholderTextColor='#FFFFFF'
         />
         <Text style={{ marginBottom: 20, color: 'red' }}>{ this.state.statusMsg }</Text>
-        <Button title="Create account" onPress={this.createAccount} />
+        <TouchableOpacity style={styles.touchableMenuItem}>
+          <Icon.Button
+            name="user"
+            size={30}
+            onPress={this.createAccount}
+            backgroundColor={SIMILO_BLUE}
+            borderColor='#FFFFFF'
+            borderWidth={1}
+            borderRadius={10}
+          >
+            <Text style={styles.menuText}>Create Account</Text>
+          </Icon.Button>
+        </TouchableOpacity>
       </View>
     );
   }

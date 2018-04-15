@@ -69,8 +69,7 @@ const RootNavigator = SwitchNavigator(
     AuthLoading: AuthLoadingScreen,
   },
   {
-    // initialRouteName: 'AuthLoading',
-    initialRouteName: 'App'
+    initialRouteName: 'AuthLoading',
   },
 );
 

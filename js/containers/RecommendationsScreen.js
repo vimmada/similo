@@ -6,6 +6,7 @@ import {
   FlatList,
   Text,
   TouchableOpacity,
+  TextInput,
 } from 'react-native';
 import { ListItem } from 'react-native-elements';
 
@@ -16,16 +17,163 @@ export default class RecommendationsScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      sort_order = 0,
-      keywords = [],
-      min_price = 0,
-      max_price = 9999999999,
-      items = [],
-    }
-    this.selectItem = this.selectItem.bind(this);
+      namesorted: 0,
+      pricesorted: 0,
+      r_max: 99999999,
+      r_min: 0,
+      max: 99999999,
+      min: 0,
+      data: [],
+      alt_data: [],
+      psort: 'Sort By Price: Low to High',
+      nsort: 'Sort By Name: A-Z',
+      min_filt: false,
+      max_filt: false,
+    };
+
+    this.sortName = this.sortName.bind(this);
+    this.sortItem = this.sortItem.bind(this);
+    this.filterItem = this.filterItem.bind(this);
+    this.filterMin = this.filterMin.bind(this);
+    this.filterMax = this.filterMax.bind(this);
 
     this.props.navigation.setParams({ selectItem: this.selectItem });
+  }
 
+  componentDidMount(){
+    const { params } = this.props.navigation.state;
+    const data = params ? params.data : null;
+    if (data) {
+      this.setState({
+        data,
+        alt_data: data
+      });
+    }
+  }
+
+  sortItem() {
+    // sort by value
+    var newdata = this.state.alt_data;
+    if (this.state.pricesorted === 1) {
+      newdata.sort(function(a, b) {
+        var priceA = a.price; // ignore upper and lowercase
+        var priceB = b.price;
+        if (priceA < priceB) {
+          return 1;
+        }
+        if (priceA > priceB) {
+          return -1;
+        }
+        // names must be equal
+        return 0;
+      });
+      this.setState({
+        pricesorted: 2,
+        alt_data: newdata,
+        psort: 'Sort By Price: Low to High',
+      });
+    } else {
+      newdata.sort(function(a, b) {
+        var priceA = a.price; // ignore upper and lowercase
+        var priceB = b.price;
+        if (priceA < priceB) {
+          return -1;
+        }
+        if (priceA > priceB) {
+          return 1;
+        }
+        // names must be equal
+        return 0;
+      });
+      this.setState({
+        pricesorted: 1,
+        alt_data: newdata,
+        psort: 'Sort By Price: High to Low',
+      });
+    }
+  }
+
+  filterItem(query) {
+    var fmin = this.state.min;
+    var fmax = this.state.max;
+    this.setState({
+      alt_data: this.state.data.filter(function(el) {
+        return el.name.toLowerCase().indexOf(query.toLowerCase()) > -1 && el.price >= fmin && el.price <= fmax;
+      }),
+    });
+  }
+
+  filterMin(min) {
+    if (min) {
+      if (this.state.max_filt) {
+        var fmax = this.state.max;
+        this.setState({
+          alt_data: this.state.data.filter(function(el) {
+            return el.price >= min && el.price <= fmax;
+          }),
+          min,
+          min_filt: true
+        });
+      }
+      else {
+        this.setState({
+          alt_data: this.state.data.filter(function(el) {
+            return el.price >= min;
+          }),
+          min,
+          min_filt: true
+        });
+      }
+    } else {
+      var reset = this.state.r_min;
+      this.setState({
+        alt_data: this.state.data.filter(function(el) {
+          return el.price >= reset;
+        }),
+        min: reset,
+        min_filt: false
+      });
+    }
+  }
+
+  filterMax(max) {
+    if (max) {
+      this.setState({
+        alt_data: this.state.data.filter(function(el) {
+          return el.price <= max;
+        }),
+        max,
+        max_filt: true
+      });
+      if (this.state.min_filt) {
+        var fmin = this.state.min;
+        this.setState({
+          alt_data: this.state.data.filter(function(el) {
+            return el.price >= fmin && el.price <= max;
+          }),
+          max,
+          max_filt: true
+        });
+      }
+      else {
+        this.setState({
+          alt_data: this.state.data.filter(function(el) {
+            return el.price <= max;
+          }),
+          max,
+          max_filt: true
+        });
+      }
+    } else {
+      var reset = this.state.r_max;
+      this.setState({
+        alt_data: this.state.data.filter(function(el) {
+          return el.price <= reset;
+        }),
+        max: reset,
+        max_filt: false
+      });
+    }
   }
 
   selectItem(item) {
@@ -59,13 +207,29 @@ export default class RecommendationsScreen extends Component {
       picture = 'http://vollrath.com/ClientCss/images/VollrathImages/No_Image_Available.jpg'
     }
     return (
-      <ListItem
-        key={item['image_url']}
-        title={item['title']}
-        subtitle={price}
-        avatar={{uri:picture}}
-        onPress={() => this.selectItem(item)}
-      />
+      <TouchableOpacity onPress={() => this.selectItem(item)}>
+        <View>
+          <Image
+            style={styles.logo}
+            source={{ uri: picture }}
+            resizeMode="stretch"
+          />
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+            <Text
+              style={{
+                textAlign: 'center',
+                flex: 1,
+                flexDirection: 'row',
+                flexWrap: 'wrap',
+              }}>
+              {' '}{item.name}{' '}
+            </Text>
+          </View>
+          <Text style={{ textAlign: 'center', marginBottom: 10 }}>
+            {' '}${price}{' '}
+          </Text>
+        </View>
+      </TouchableOpacity>
     );
   };
 
@@ -74,21 +238,104 @@ export default class RecommendationsScreen extends Component {
     const data = params ? params.data : null;
     if (data) {
       return (
-        <FlatList
-          data={data}
-          renderItem={this._renderItem}
-          keyExtractor={this._keyExtractor}
-        />
+        <View style={styles.container}>
+          <View style={{ flexDirection: 'row' }}>
+            <TouchableOpacity onPress={this.sortItem} style={styles.button}>
+              <Text style={{ color: 'white' }}> {this.state.psort} </Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={this.sortName} style={styles.button}>
+              <Text style={{ color: 'white' }}> {this.state.nsort} </Text>
+            </TouchableOpacity>
+          </View>
+          <View style={{ flexDirection: 'row' }}>
+            <Text>Filter Keywords</Text>
+            <TextInput
+              style={{
+                height: 40,
+                width: 200,
+                borderColor: 'gray',
+                borderWidth: 1,
+              }}
+              onChangeText={text => this.filterItem(text)}
+            />
+          </View>
+          <View style={{ flexDirection: 'row' }}>
+            <Text>Min Price</Text>
+            <TextInput
+              style={{
+                height: 40,
+                width: 70,
+                borderColor: 'gray',
+                borderWidth: 1,
+              }}
+              onChangeText={text => this.filterMin(text)}
+            />
+            <Text>Max Price</Text>
+            <TextInput
+              style={{
+                height: 40,
+                width: 70,
+                borderColor: 'gray',
+                borderWidth: 1,
+              }}
+              onChangeText={text => this.filterMax(text)}
+            />
+          </View>
+          <FlatList
+            horizontal={false}
+            numColumns={2}
+            data={this.state.alt_data}
+            extraData={this.state}
+            renderItem={this._renderItem}
+            keyExtractor={this._keyExtractor}
+          />
+        </View>
       );
     }
     else {
       return (
         <View>
-          <Text style={{fontSize: 30}}>
-            No Similar Items were found.
-          <Text>
+          <Text
+            style={{
+              textAlign: 'center',
+              flex: 1,
+              flexDirection: 'row',
+              flexWrap: 'wrap',
+            }}>
+            `Oops! We couldn't find any recommendations based on your upload. Please try again, and try the following:`
+            {' '}
+            {'\n'}
+            1. Focus on the item to increase image quality.{'\n'}
+            2. Take a photo from a different angle for a more direct image.
+            {'\n'}
+            3. Minimize any movement that may cause blur.{'\n'}
+            4. Crop your image more close to the item(s) of interest.{'\n'}
+            5. Adjust lightning to increase image clarity.
+          </Text>
         </View>
       );
     }
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: Constants.statusBarHeight,
+    backgroundColor: '#ecf0f1',
+  },
+  logo: {
+    backgroundColor: '#056ecf',
+    height: 220,
+    width: 180,
+    margin: 5,
+  },
+  button: {
+    alignItems: 'center',
+    backgroundColor: '#4285f4',
+    padding: 10,
+    borderRadius: 10,
+  },
+});

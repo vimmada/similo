@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import moment from 'moment';
 import {
   AsyncStorage,
   StyleSheet,
@@ -35,7 +36,7 @@ export default class HistoryScreen extends Component {
         })
         .then((data) => {
           this.setState({
-            data: data.history,
+            data: data.history.reverse(),
           });
         })
         .catch(e => console.error(e));
@@ -49,6 +50,7 @@ export default class HistoryScreen extends Component {
   _keyExtractor = (item, index) => item.date_created;
 
   _renderItem = ({item}) => {
+    const timeAgo = moment(item.date_created).fromNow();
     return (
       <TouchableOpacity onPress={this.searchItem(item)}>
         <View>
@@ -62,7 +64,7 @@ export default class HistoryScreen extends Component {
 
       /*<ListItem
         avatar={{ uri: `data:image/png;base64,${item.image}` }}
-        title={`Searched on ${item.date_created}`}
+        title={`Searched ${timeAgo}`}
         key={item.dateCreated}
         onPress={() => this.searchItem(item)}
       />*/

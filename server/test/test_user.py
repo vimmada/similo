@@ -14,7 +14,7 @@ class TestUser(BaseTest):
         res = self.client.get(self.make_route("/"))
         data, status = self.get_data_status(res)
         self.assertEqual(status, 200)
-        self.assertIn("message", data)
+        self.assertIn("Success", data)
 
     def test_can_create_user(self):
         """Can create user"""

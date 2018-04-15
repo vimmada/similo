@@ -2,7 +2,7 @@ import datetime
 import base64
 from marshmallow import Schema, fields
 from imageProcessor import db
-from common import cred, constants
+from imageProcessor.common import cred, constants
 
 class SearchLog(db.Model):
     """

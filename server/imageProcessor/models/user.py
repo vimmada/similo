@@ -2,7 +2,7 @@ import datetime
 import jwt
 from flask import current_app
 from imageProcessor import db
-from common import cred, constants
+from imageProcessor.common import cred, constants
 
 class User(db.Model):
     """

@@ -10,8 +10,11 @@ import {
   Button,
 } from 'react-native';
 import { ListItem } from 'react-native-elements';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import { API_SAVED_ITEMS } from '../config/constants';
+import { colors } from '../config/styles';
 
+const { SIMILO_BLUE } = colors;
 
 export default class SavedItemsScreen extends Component {
   constructor(props) {
@@ -91,7 +94,7 @@ export default class SavedItemsScreen extends Component {
     return (
       <TouchableOpacity onPress={this.selectItem(item)}>
         <View>
-          <Image style={styles.logo} source={{uri: picture)}>
+          <Image style={styles.logo} source={{uri: picture}}>
           </Image>
         </View>
       </TouchableOpacity>
@@ -107,7 +110,7 @@ export default class SavedItemsScreen extends Component {
 
   render() {
     const data = this.state.data;
-    if (data) {
+    if (data.length) {
       return (
         <View style={styles.container}>
           <FlatList
@@ -117,10 +120,18 @@ export default class SavedItemsScreen extends Component {
             renderItem={this._renderItem}
             keyExtractor={this._keyExtractor}
           />
-          <Button
-            title="Export Saved Items"
-            onPress={() => { this._export(data) }}
-          />
+          <TouchableOpacity style={styles.touchableMenuItem}>
+            <Icon.Button
+              name="share-square"
+              size={30}
+              backgroundColor={SIMILO_BLUE}
+              borderColor='#FFFFFF'
+              borderWidth={1}
+              borderRadius={10}
+            >
+              <Text style={styles.menuText}>Export Saved Items</Text>
+            </Icon.Button>
+          </TouchableOpacity>
         </View>
       );
     }
@@ -139,7 +150,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: Constants.statusBarHeight,
     backgroundColor: '#ecf0f1',
   },
   logo: {
@@ -147,4 +157,12 @@ const styles = StyleSheet.create({
     width: 180,
     margin: 5,
   },
+    touchableMenuItem: {
+    width: '80%',
+    marginBottom: 30,
+  },
+  menuText: {
+    fontSize: 24,
+    color: '#FFFFFF',
+  }
 });

@@ -76,6 +76,47 @@ export default class RecommendationsScreen extends Component {
     }
   }
 
+  sortName() {
+    var newdata = this.state.alt_data;
+    if (this.state.namesorted === 1) {
+      newdata.sort(function(a, b) {
+        var nameA = a.name.toUpperCase(); // ignore upper and lowercase
+        var nameB = b.name.toUpperCase(); // ignore upper and lowercase
+        if (nameA < nameB) {
+          return 1;
+        }
+        if (nameA > nameB) {
+          return -1;
+        }
+        // names must be equal
+        return 0;
+      });
+      this.setState({
+        namesorted: 2,
+        alt_data: newdata,
+        nsort: 'Sort By Name: A-Z',
+      });
+    } else {
+      newdata.sort(function(a, b) {
+        var nameA = a.name.toUpperCase(); // ignore upper and lowercase
+        var nameB = b.name.toUpperCase(); // ignore upper and lowercase
+        if (nameA < nameB) {
+          return -1;
+        }
+        if (nameA > nameB) {
+          return 1;
+        }
+        // names must be equal
+        return 0;
+      });
+      this.setState({
+        namesorted: 1,
+        alt_data: newdata,
+        nsort: 'Sort By Name: Z-A',
+      });
+    }
+  }
+
   sortItem() {
     // sort by value
     var newdata = this.state.alt_data;
@@ -348,7 +389,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: Constants.statusBarHeight,
     backgroundColor: '#ecf0f1',
   },
   logo: {

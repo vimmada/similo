@@ -82,7 +82,7 @@ export default class HistoryScreen extends Component {
           keyExtractor={this._keyExtractor}
         />
       </View>
-    \);
+    );
   }
 }
 
@@ -91,7 +91,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: Constants.statusBarHeight,
     backgroundColor: '#ecf0f1',
   },
   logo: {

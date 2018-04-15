@@ -6,9 +6,9 @@ export default class FilterScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      keywords = [],
-      min_price = 0,
-      max_price = 9999999999,
+      keywords: [],
+      min_price: 0,
+      max_price: 9999999999,
     }
   }
   
@@ -57,14 +57,17 @@ export default class FilterScreen extends Component {
     const { params } = this.props.navigation.state;
     const data = params ? params.data : null;
     return (
-      <FlatList
-        data={data}
-        renderItem={this._renderItem}
-        keyExtractor={this._keyExtractor}
-      />
-      <Button
-        title={'Apply'}
-        onPress={() => { this.filterdata() }}
-      />
+      <View>
+        <FlatList
+          data={data}
+          renderItem={this._renderItem}
+          keyExtractor={this._keyExtractor}
+        />
+        <Button
+          title={'Apply'}
+          onPress={() => { this.filterdata() }}
+        />
+      </View>
     );
+  }
 }

@@ -6,7 +6,7 @@ export default class SortScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      sort_order = 0,
+      sort_order: 0,
     }
   }
 
@@ -68,7 +68,7 @@ export default class SortScreen extends Component {
         <View>
           <Text style={{fontSize: 30}}>
             No Similar Items were found.
-          <Text>
+          </Text>
         </View>
       );
     }

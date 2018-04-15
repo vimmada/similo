@@ -44,7 +44,9 @@ Upload an image and get product recommendations
             "product_url": "https://www.amazon.com/Wrangler-Authentics-Classic-Relaxed-Slate/dp/B074MGN4XG?psc=1&SubscriptionId=AKIAIJQWJX5VNAVFF7DQ&tag=similo-20&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B074MGN4XG",
             "title": "Wrangler Authentics Men's Classic Relaxed Fit Jean, Slate Flex, 38X34"
         }
-    ]
+    ],
+    "total_results": 4640,
+    "total_returned": 30
 }
 ```
 

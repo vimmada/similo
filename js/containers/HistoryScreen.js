@@ -61,13 +61,6 @@ export default class HistoryScreen extends Component {
           <Text style={{textAlign: 'center'}}> Searched on {item.date_created} </Text>
         </View>
       </TouchableOpacity>
-
-      /*<ListItem
-        avatar={{ uri: `data:image/png;base64,${item.image}` }}
-        title={`Searched ${timeAgo}`}
-        key={item.dateCreated}
-        onPress={() => this.searchItem(item)}
-      />*/
     );
   };
 
@@ -94,9 +87,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#ecf0f1',
   },
   logo: {
-    backgroundColor: '#056ecf',
     height: 220,
     width: 180,
-    margin: 5,
+    margin: 10,
   },
 });

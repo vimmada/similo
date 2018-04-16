@@ -281,7 +281,7 @@ export default class RecommendationsScreen extends Component {
           <Image
             style={styles.logo}
             source={{ uri: picture }}
-            resizeMode="stretch"
+            resizeMode="center"
           />
           <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
             <Text
@@ -396,7 +396,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#ecf0f1',
+    backgroundColor: 'white',
   },
   logo: {
     backgroundColor: '#056ecf',
@@ -406,7 +406,6 @@ const styles = StyleSheet.create({
   },
   button: {
     alignItems: 'center',
-    backgroundColor: '#4285f4',
     padding: 10,
     borderRadius: 10,
     margin: 10

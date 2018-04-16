@@ -97,7 +97,7 @@ export default class SavedItemsScreen extends Component {
           <Image
             style={styles.logo}
             source={{ uri: picture }}
-            resizeMode="stretch"
+            resizeMode="center"
           />
           <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
             <Text
@@ -148,12 +148,11 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: Constants.statusBarHeight,
-    backgroundColor: '#ecf0f1',
+    backgroundColor: 'white',
   },
   logo: {
     height: 220,
     width: 180,
-    margin: 5,
+    margin: 10,
   },
 });

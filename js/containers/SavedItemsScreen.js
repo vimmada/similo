@@ -17,6 +17,10 @@ import { colors } from '../config/styles';
 const { SIMILO_BLUE } = colors;
 
 export default class SavedItemsScreen extends Component {
+  static navigationOptions = {
+    'title': 'Saved Items',
+  };
+
   constructor(props) {
     super(props);
 
@@ -84,9 +88,6 @@ export default class SavedItemsScreen extends Component {
     if (pnum.length === 1) {
       price = price + dollar;
     }
-    else if(pnum.length === 0) {
-      price = "No Price Found"
-    }
     else {
       price = price  + dollar + "." + cents;
     }
@@ -96,7 +97,7 @@ export default class SavedItemsScreen extends Component {
     }
     return (
       <TouchableOpacity onPress={() => this.selectItem(item)}>
-        <View>
+        <View style={{borderBottomWidth: 1, borderBottomColor: 'grey', width: '100%'}}>
           <Image
             style={styles.logo}
             source={{ uri: picture }}
@@ -114,7 +115,7 @@ export default class SavedItemsScreen extends Component {
             </Text>
           </View>
           <Text style={{ textAlign: 'center', marginBottom: 10 }}>
-            {' '}{price}{' '}
+            {' '}{price === '$' ? 'Price not available' : price}{' '}
           </Text>
         </View>
       </TouchableOpacity>
@@ -128,10 +129,11 @@ export default class SavedItemsScreen extends Component {
         <View style={styles.container}>
           <FlatList
             horizontal={false}
-            numColumns={2}
             data={data}
+            numColumns={2}
             renderItem={this._renderItem}
             keyExtractor={this._keyExtractor}
+            style={{width: '100%'}}
           />
         </View>
       );
@@ -155,8 +157,9 @@ const styles = StyleSheet.create({
   },
   logo: {
     height: 220,
-    width: 180,
+    width: 160,
     margin: 10,
+    alignSelf: 'center',
   },
     touchableMenuItem: {
     width: '80%',

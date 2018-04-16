@@ -31,7 +31,7 @@ export async function uploadPhoto(photo) {
     .then(data => data.items)
     // navigate to RecommendationsScreen
     .then(recomm => this.props.navigation.navigate('Recommendations', { data: recomm }))
-    .catch(e => console.error(e));
+    .catch(() => this.props.navigation.navigate('Recommendations', { data: null }));
 }
 
 export function selectPhotoFromGallery() {

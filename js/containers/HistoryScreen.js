@@ -15,6 +15,10 @@ import { API_HISTORY } from '../config/constants';
 import { uploadPhoto } from '../lib';
 
 export default class HistoryScreen extends Component {
+  static navigationOptions = {
+    title: 'Previous Searches',
+  };
+
   constructor(props) {
     super(props);
     this.state = {
@@ -52,13 +56,13 @@ export default class HistoryScreen extends Component {
   _renderItem = ({item}) => {
     const timeAgo = moment(item.date_created).fromNow();
     return (
-      <TouchableOpacity onPress={this.searchItem(item)}>
-        <View>
+      <TouchableOpacity onPress={() => this.searchItem(item)}>
+        <View style={{borderBottomWidth: 1, borderBottomColor: 'grey', width: '100%'}}>
           <Image
             style={styles.logo}
             source={{uri: `data:image/png;base64,${item.image}`}}>
           </Image>
-          <Text style={{textAlign: 'center'}}> Searched on {item.date_created} </Text>
+          <Text style={{textAlign: 'center'}}> Searched {timeAgo} </Text>
         </View>
       </TouchableOpacity>
     );
@@ -73,6 +77,7 @@ export default class HistoryScreen extends Component {
           data={this.state.data}
           renderItem={this._renderItem}
           keyExtractor={this._keyExtractor}
+          style={{width: '100%'}}
         />
       </View>
     );
@@ -88,7 +93,8 @@ const styles = StyleSheet.create({
   },
   logo: {
     height: 220,
-    width: 180,
+    width: 160,
     margin: 10,
+    alignSelf: 'center',
   },
 });

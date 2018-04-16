@@ -13,6 +13,7 @@ import { NavigationActions } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { colors } from '../config/styles';
+import { selectPhotoFromGallery, takePhotoWithCamera } from '../lib';
 
 const { SIMILO_BLUE } = colors;
 
@@ -162,9 +163,27 @@ export default class RecommendationsScreen extends Component {
   filterItem(query) {
     var fmin = this.state.min;
     var fmax = this.state.max;
+
+    const termsDict = {};
+    const termsList = query.split(' ');
+
+    for (let term of termsList) {
+      if (term) {
+        termsDict[term.toLowerCase()] = true;
+      }
+    }
+
     this.setState({
       alt_data: this.state.data.filter(function(el) {
-        return el.title.toLowerCase().indexOf(query.toLowerCase()) > -1 && el.price >= fmin && el.price <= fmax;
+        const title = el.title.toLowerCase()
+
+        for (let term in termsDict) {
+          if (title.indexOf(term) === -1) {
+            return false;
+          }
+        }
+
+        return true;
       }),
     });
   }
@@ -265,9 +284,6 @@ export default class RecommendationsScreen extends Component {
     if (pnum.length === 1) {
       price = price + dollar;
     }
-    else if(pnum.length === 0) {
-      price = "No Price Found"
-    }
     else {
       price = price  + dollar + "." + cents;
     }
@@ -295,7 +311,7 @@ export default class RecommendationsScreen extends Component {
             </Text>
           </View>
           <Text style={{ textAlign: 'center', marginBottom: 10 }}>
-            {' '}{price}{' '}
+            {' '}{price === '$' ? 'Price not available' : price}{' '}
           </Text>
         </View>
       </TouchableOpacity>
@@ -316,44 +332,22 @@ export default class RecommendationsScreen extends Component {
               <Text style={{ color: 'white' }}> {this.state.nsort} </Text>
             </TouchableOpacity>
           </View>
-          <View style={{ flexDirection: 'row' }}>
-            <Text style={{margin: 10}}>Filter Keywords</Text>
+          <View style={{ flexDirection: 'row', width: '100%' }}>
+            <Text style={{margin: 10, width: '10%'}}>Filter: </Text>
             <TextInput
               style={{
                 height: 40,
-                width: 200,
+                width: '80%',
                 borderColor: 'gray',
                 borderWidth: 1,
                 borderRadius: 10,
               }}
+              underlineColorAndroid='rgba(0,0,0,0)'
+              placeholder='space-separated, case-insensitive keywords'
               onChangeText={text => this.filterItem(text)}
             />
           </View>
-          <View style={{ flexDirection: 'row' }}>
-            <Text style={{margin: 20}}>Min Price</Text>
-            <TextInput
-              style={{
-                height: 40,
-                width: 70,
-                borderColor: 'gray',
-                borderWidth: 1,
-                borderRadius: 10,
-              }}
-              onChangeText={text => this.filterMin(text)}
-            />
-            <Text style={{margin: 20}}>Max Price</Text>
-            <TextInput
-              style={{
-                height: 40,
-                width: 70,
-                borderColor: 'gray',
-                borderWidth: 1,
-                borderRadius: 10,
-                marginTop: 10
-              }}
-              onChangeText={text => this.filterMax(text)}
-            />
-          </View>
+
           <FlatList
             horizontal={false}
             numColumns={2}
@@ -367,24 +361,62 @@ export default class RecommendationsScreen extends Component {
     }
     else {
       return (
-        <View>
+        <View style={{flex: 1, alignItems: 'center', backgroundColor: '#4285f4'}}>
+          <Text style={{
+              fontSize: 64,
+              fontWeight: 'bold',
+              color: '#FFFFFF',
+              margin: 10
+            }}
+          >
+            OOPS!
+          </Text>
           <Text
             style={{
-              textAlign: 'center',
-              flex: 1,
-              flexDirection: 'row',
-              flexWrap: 'wrap',
+              fontSize: 16,
+              color: '#FFFFFF',
+              textAlign: 'left',
+              marginLeft: 10,
+              marginRight: 10,
+              marginBottom: 20,
             }}>
-            `Oops! We couldn't find any recommendations based on your upload. Please try again, and try the following:`
-            {' '}
+            We couldn't find any recommendations based on your upload. Please try again, and try the following:
+            {'\n'}
             {'\n'}
             1. Focus on the item to increase image quality.{'\n'}
             2. Take a photo from a different angle for a more direct image.
             {'\n'}
             3. Minimize any movement that may cause blur.{'\n'}
             4. Crop your image more close to the item(s) of interest.{'\n'}
-            5. Adjust lightning to increase image clarity.
+            5. Adjust lightning to increase image clarity.{'\n'}
+            6. Make sure you are taking a photo of clothing!
           </Text>
+          <TouchableOpacity style={styles.touchableMenuItem}>
+            <Icon.Button
+              name="camera"
+              size={30}
+              onPress={takePhotoWithCamera.bind(this)}
+              backgroundColor={SIMILO_BLUE}
+              borderColor='#FFFFFF'
+              borderWidth={1}
+              borderRadius={10}
+            >
+              <Text style={styles.menuText}>Take Photo</Text>
+            </Icon.Button>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.touchableMenuItem}>
+            <Icon.Button
+              name="image"
+              size={30}
+              onPress={selectPhotoFromGallery.bind(this)}
+              backgroundColor={SIMILO_BLUE}
+              borderColor='#FFFFFF'
+              borderWidth={1}
+              borderRadius={10}
+            >
+              <Text style={styles.menuText}>Upload Photo</Text>
+            </Icon.Button>
+          </TouchableOpacity>
         </View>
       );
     }
@@ -399,15 +431,49 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   logo: {
-    backgroundColor: '#056ecf',
     height: 220,
-    width: 180,
+    width: 160,
     margin: 10,
   },
   button: {
+    backgroundColor: SIMILO_BLUE,
     alignItems: 'center',
     padding: 10,
     borderRadius: 10,
     margin: 10
   },
+  touchableMenuItem: {
+    width: '80%',
+    marginBottom: 30,
+  },
+  menuText: {
+    fontSize: 24,
+    color: '#FFFFFF',
+  }
 });
+
+// <View style={{ flexDirection: 'row' }}>
+//   <Text style={{margin: 20}}>Min Price</Text>
+//   <TextInput
+//     style={{
+//       height: 40,
+//       width: 70,
+//       borderColor: 'gray',
+//       borderWidth: 1,
+//       borderRadius: 10,
+//     }}
+//     onChangeText={text => this.filterMin(text)}
+//   />
+//   <Text style={{margin: 20}}>Max Price</Text>
+//   <TextInput
+//     style={{
+//       height: 40,
+//       width: 70,
+//       borderColor: 'gray',
+//       borderWidth: 1,
+//       borderRadius: 10,
+//       marginTop: 10
+//     }}
+//     onChangeText={text => this.filterMax(text)}
+//   />
+// </View>

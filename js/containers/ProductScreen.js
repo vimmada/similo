@@ -97,7 +97,7 @@ export default class ProductScreen extends Component {
           source={{uri: picture}}
         />
         <Text style={{fontSize: 20, padding: 15}}> {name} </Text>
-        <Text style={{fontSize: 20}}> {Price} </Text>
+        <Text style={{fontSize: 20}}> {Price === '$.0' ? 'Price not available' : Price} </Text>
         <Text style={{fontSize: 15, padding: 15, color: '#4285f4'}} onPress={() => Linking.openURL(url)}>To view availability and purchase, click here to visit product webpage.</Text>
         <Button
           title={this.state.saved ? 'Item Saved' : 'Save Item'}

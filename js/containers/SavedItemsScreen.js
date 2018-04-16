@@ -81,6 +81,9 @@ export default class SavedItemsScreen extends Component {
     if (pnum.length === 1) {
       price = price + dollar;
     }
+    else if(pnum.length === 0) {
+      price = "No Price Found"
+    }
     else {
       price = price  + dollar + "." + cents;
     }
@@ -89,19 +92,29 @@ export default class SavedItemsScreen extends Component {
       picture = 'http://vollrath.com/ClientCss/images/VollrathImages/No_Image_Available.jpg'
     }
     return (
-      <TouchableOpacity onPress={this.selectItem(item)}>
+      <TouchableOpacity onPress={() => this.selectItem(item)}>
         <View>
-          <Image style={styles.logo} source={{uri: picture)}>
-          </Image>
+          <Image
+            style={styles.logo}
+            source={{ uri: picture }}
+            resizeMode="stretch"
+          />
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+            <Text
+              style={{
+                textAlign: 'center',
+                flex: 1,
+                flexDirection: 'row',
+                flexWrap: 'wrap',
+              }}>
+              {' '}{item.title}{' '}
+            </Text>
+          </View>
+          <Text style={{ textAlign: 'center', marginBottom: 10 }}>
+            {' '}{price}{' '}
+          </Text>
         </View>
       </TouchableOpacity>
-      /*<ListItem
-        key={item['image_url']}
-        title={item['title']}
-        subtitle={price}
-        avatar={{uri:picture}}
-        onPress={() => this.selectItem(item)}
-      />*/
     );
   };
 
@@ -116,10 +129,6 @@ export default class SavedItemsScreen extends Component {
             data={data}
             renderItem={this._renderItem}
             keyExtractor={this._keyExtractor}
-          />
-          <Button
-            title="Export Saved Items"
-            onPress={() => { this._export(data) }}
           />
         </View>
       );

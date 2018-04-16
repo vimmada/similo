@@ -265,6 +265,9 @@ export default class RecommendationsScreen extends Component {
     if (pnum.length === 1) {
       price = price + dollar;
     }
+    else if(pnum.length === 0) {
+      price = "No Price Found"
+    }
     else {
       price = price  + dollar + "." + cents;
     }
@@ -292,7 +295,7 @@ export default class RecommendationsScreen extends Component {
             </Text>
           </View>
           <Text style={{ textAlign: 'center', marginBottom: 10 }}>
-            {' '}${price}{' '}
+            {' '}{price}{' '}
           </Text>
         </View>
       </TouchableOpacity>
@@ -314,35 +317,39 @@ export default class RecommendationsScreen extends Component {
             </TouchableOpacity>
           </View>
           <View style={{ flexDirection: 'row' }}>
-            <Text>Filter Keywords</Text>
+            <Text style={{margin: 10}}>Filter Keywords</Text>
             <TextInput
               style={{
                 height: 40,
                 width: 200,
                 borderColor: 'gray',
                 borderWidth: 1,
+                borderRadius: 10,
               }}
               onChangeText={text => this.filterItem(text)}
             />
           </View>
           <View style={{ flexDirection: 'row' }}>
-            <Text>Min Price</Text>
+            <Text style={{margin: 20}}>Min Price</Text>
             <TextInput
               style={{
                 height: 40,
                 width: 70,
                 borderColor: 'gray',
                 borderWidth: 1,
+                borderRadius: 10,
               }}
               onChangeText={text => this.filterMin(text)}
             />
-            <Text>Max Price</Text>
+            <Text style={{margin: 20}}>Max Price</Text>
             <TextInput
               style={{
                 height: 40,
                 width: 70,
                 borderColor: 'gray',
                 borderWidth: 1,
+                borderRadius: 10,
+                marginTop: 10
               }}
               onChangeText={text => this.filterMax(text)}
             />
@@ -395,12 +402,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#056ecf',
     height: 220,
     width: 180,
-    margin: 5,
+    margin: 10,
   },
   button: {
     alignItems: 'center',
     backgroundColor: '#4285f4',
     padding: 10,
     borderRadius: 10,
+    margin: 10
   },
 });

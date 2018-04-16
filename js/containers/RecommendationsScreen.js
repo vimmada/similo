@@ -80,8 +80,8 @@ export default class RecommendationsScreen extends Component {
     var newdata = this.state.alt_data;
     if (this.state.namesorted === 1) {
       newdata.sort(function(a, b) {
-        var nameA = a.name.toUpperCase(); // ignore upper and lowercase
-        var nameB = b.name.toUpperCase(); // ignore upper and lowercase
+        var nameA = a.title.toUpperCase(); // ignore upper and lowercase
+        var nameB = b.title.toUpperCase(); // ignore upper and lowercase
         if (nameA < nameB) {
           return 1;
         }
@@ -98,8 +98,8 @@ export default class RecommendationsScreen extends Component {
       });
     } else {
       newdata.sort(function(a, b) {
-        var nameA = a.name.toUpperCase(); // ignore upper and lowercase
-        var nameB = b.name.toUpperCase(); // ignore upper and lowercase
+        var nameA = a.title.toUpperCase(); // ignore upper and lowercase
+        var nameB = b.title.toUpperCase(); // ignore upper and lowercase
         if (nameA < nameB) {
           return -1;
         }
@@ -164,7 +164,7 @@ export default class RecommendationsScreen extends Component {
     var fmax = this.state.max;
     this.setState({
       alt_data: this.state.data.filter(function(el) {
-        return el.name.toLowerCase().indexOf(query.toLowerCase()) > -1 && el.price >= fmin && el.price <= fmax;
+        return el.title.toLowerCase().indexOf(query.toLowerCase()) > -1 && el.price >= fmin && el.price <= fmax;
       }),
     });
   }
@@ -265,6 +265,9 @@ export default class RecommendationsScreen extends Component {
     if (pnum.length === 1) {
       price = price + dollar;
     }
+    else if(pnum.length === 0) {
+      price = "No Price Found"
+    }
     else {
       price = price  + dollar + "." + cents;
     }
@@ -278,7 +281,7 @@ export default class RecommendationsScreen extends Component {
           <Image
             style={styles.logo}
             source={{ uri: picture }}
-            resizeMode="stretch"
+            resizeMode="center"
           />
           <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
             <Text
@@ -288,11 +291,11 @@ export default class RecommendationsScreen extends Component {
                 flexDirection: 'row',
                 flexWrap: 'wrap',
               }}>
-              {' '}{item.name}{' '}
+              {' '}{item.title}{' '}
             </Text>
           </View>
           <Text style={{ textAlign: 'center', marginBottom: 10 }}>
-            {' '}${price}{' '}
+            {' '}{price}{' '}
           </Text>
         </View>
       </TouchableOpacity>
@@ -314,35 +317,39 @@ export default class RecommendationsScreen extends Component {
             </TouchableOpacity>
           </View>
           <View style={{ flexDirection: 'row' }}>
-            <Text>Filter Keywords</Text>
+            <Text style={{margin: 10}}>Filter Keywords</Text>
             <TextInput
               style={{
                 height: 40,
                 width: 200,
                 borderColor: 'gray',
                 borderWidth: 1,
+                borderRadius: 10,
               }}
               onChangeText={text => this.filterItem(text)}
             />
           </View>
           <View style={{ flexDirection: 'row' }}>
-            <Text>Min Price</Text>
+            <Text style={{margin: 20}}>Min Price</Text>
             <TextInput
               style={{
                 height: 40,
                 width: 70,
                 borderColor: 'gray',
                 borderWidth: 1,
+                borderRadius: 10,
               }}
               onChangeText={text => this.filterMin(text)}
             />
-            <Text>Max Price</Text>
+            <Text style={{margin: 20}}>Max Price</Text>
             <TextInput
               style={{
                 height: 40,
                 width: 70,
                 borderColor: 'gray',
                 borderWidth: 1,
+                borderRadius: 10,
+                marginTop: 10
               }}
               onChangeText={text => this.filterMax(text)}
             />
@@ -389,18 +396,18 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#ecf0f1',
+    backgroundColor: 'white',
   },
   logo: {
     backgroundColor: '#056ecf',
     height: 220,
     width: 180,
-    margin: 5,
+    margin: 10,
   },
   button: {
     alignItems: 'center',
-    backgroundColor: '#4285f4',
     padding: 10,
     borderRadius: 10,
+    margin: 10
   },
 });

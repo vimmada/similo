@@ -84,6 +84,9 @@ export default class SavedItemsScreen extends Component {
     if (pnum.length === 1) {
       price = price + dollar;
     }
+    else if(pnum.length === 0) {
+      price = "No Price Found"
+    }
     else {
       price = price  + dollar + "." + cents;
     }
@@ -92,19 +95,29 @@ export default class SavedItemsScreen extends Component {
       picture = 'http://vollrath.com/ClientCss/images/VollrathImages/No_Image_Available.jpg'
     }
     return (
-      <TouchableOpacity onPress={this.selectItem(item)}>
+      <TouchableOpacity onPress={() => this.selectItem(item)}>
         <View>
-          <Image style={styles.logo} source={{uri: picture}}>
-          </Image>
+          <Image
+            style={styles.logo}
+            source={{ uri: picture }}
+            resizeMode="center"
+          />
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+            <Text
+              style={{
+                textAlign: 'center',
+                flex: 1,
+                flexDirection: 'row',
+                flexWrap: 'wrap',
+              }}>
+              {' '}{item.title}{' '}
+            </Text>
+          </View>
+          <Text style={{ textAlign: 'center', marginBottom: 10 }}>
+            {' '}{price}{' '}
+          </Text>
         </View>
       </TouchableOpacity>
-      /*<ListItem
-        key={item['image_url']}
-        title={item['title']}
-        subtitle={price}
-        avatar={{uri:picture}}
-        onPress={() => this.selectItem(item)}
-      />*/
     );
   };
 
@@ -120,18 +133,6 @@ export default class SavedItemsScreen extends Component {
             renderItem={this._renderItem}
             keyExtractor={this._keyExtractor}
           />
-          <TouchableOpacity style={styles.touchableMenuItem}>
-            <Icon.Button
-              name="share-square"
-              size={30}
-              backgroundColor={SIMILO_BLUE}
-              borderColor='#FFFFFF'
-              borderWidth={1}
-              borderRadius={10}
-            >
-              <Text style={styles.menuText}>Export Saved Items</Text>
-            </Icon.Button>
-          </TouchableOpacity>
         </View>
       );
     }
@@ -150,12 +151,12 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#ecf0f1',
+    backgroundColor: 'white',
   },
   logo: {
     height: 220,
     width: 180,
-    margin: 5,
+    margin: 10,
   },
     touchableMenuItem: {
     width: '80%',

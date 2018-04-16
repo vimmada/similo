@@ -51,8 +51,8 @@ export default class RecommendationsScreen extends Component {
       min: 0,
       data: [],
       alt_data: [],
-      psort: 'Sort By Price: Low to High',
-      nsort: 'Sort By Name: A-Z',
+      psort: '$ (Low to High)',
+      nsort: 'Name (A-Z)',
       min_filt: false,
       max_filt: false,
     };
@@ -62,6 +62,7 @@ export default class RecommendationsScreen extends Component {
     this.filterItem = this.filterItem.bind(this);
     this.filterMin = this.filterMin.bind(this);
     this.filterMax = this.filterMax.bind(this);
+    this.relevance = this.relevance.bind(this);
 
     this.props.navigation.setParams({ selectItem: this.selectItem });
   }
@@ -77,12 +78,19 @@ export default class RecommendationsScreen extends Component {
     }
   }
 
+  relevance() {
+    const alt_data = this.state.data.slice(0);
+    this.setState({
+      alt_data,
+    });
+  }
+
   sortName() {
     var newdata = this.state.alt_data;
     if (this.state.namesorted === 1) {
       newdata.sort(function(a, b) {
-        var nameA = a.title.toUpperCase(); // ignore upper and lowercase
-        var nameB = b.title.toUpperCase(); // ignore upper and lowercase
+        var nameA = a.title.toLowerCase(); // ignore upper and lowercase
+        var nameB = b.title.toLowerCase(); // ignore upper and lowercase
         if (nameA < nameB) {
           return 1;
         }
@@ -95,12 +103,12 @@ export default class RecommendationsScreen extends Component {
       this.setState({
         namesorted: 2,
         alt_data: newdata,
-        nsort: 'Sort By Name: A-Z',
+        nsort: 'Name (A-Z)',
       });
     } else {
       newdata.sort(function(a, b) {
-        var nameA = a.title.toUpperCase(); // ignore upper and lowercase
-        var nameB = b.title.toUpperCase(); // ignore upper and lowercase
+        var nameA = a.title.toLowerCase(); // ignore upper and lowercase
+        var nameB = b.title.toLowerCase(); // ignore upper and lowercase
         if (nameA < nameB) {
           return -1;
         }
@@ -113,7 +121,7 @@ export default class RecommendationsScreen extends Component {
       this.setState({
         namesorted: 1,
         alt_data: newdata,
-        nsort: 'Sort By Name: Z-A',
+        nsort: 'Name (Z-A)',
       });
     }
   }
@@ -137,7 +145,7 @@ export default class RecommendationsScreen extends Component {
       this.setState({
         pricesorted: 2,
         alt_data: newdata,
-        psort: 'Sort By Price: Low to High',
+        psort: '$ (Low to High)',
       });
     } else {
       newdata.sort(function(a, b) {
@@ -155,7 +163,7 @@ export default class RecommendationsScreen extends Component {
       this.setState({
         pricesorted: 1,
         alt_data: newdata,
-        psort: 'Sort By Price: High to Low',
+        psort: '$ (High to Low)',
       });
     }
   }
@@ -280,12 +288,12 @@ export default class RecommendationsScreen extends Component {
     var pnum = item['price'].toString();
     var dollar = pnum.substring(0, pnum.length - 2);
     var cents = pnum.substring(pnum.length-2, pnum.length);
-    var price = "$";
+    var price = "No Price Found";
     if (pnum.length === 1) {
-      price = price + dollar;
+      price = "$" + dollar;
     }
     else {
-      price = price  + dollar + "." + cents;
+      price = "$"  + dollar + "." + cents;
     }
     var picture = item['image_url'];
     if (!picture) {
@@ -324,12 +332,16 @@ export default class RecommendationsScreen extends Component {
     if (data) {
       return (
         <View style={styles.container}>
-          <View style={{ flexDirection: 'row' }}>
+          <View style={{ flexDirection: 'row', width: '100%' }}>
+            <Text style={{margin: 10, width: '10%'}}>Sort: </Text>
             <TouchableOpacity onPress={this.sortItem} style={styles.button}>
-              <Text style={{ color: 'white' }}> {this.state.psort} </Text>
+              <Text style={{ color: 'white', fontSize: 12 }} textAlignVertical='center'> {this.state.psort} </Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={this.sortName} style={styles.button}>
-              <Text style={{ color: 'white' }}> {this.state.nsort} </Text>
+              <Text style={{ color: 'white', fontSize: 12 }} textAlignVertical='center'> {this.state.nsort} </Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={this.relevance} style={styles.button}>
+              <Text style={{ color: 'white', fontSize: 12 }} textAlignVertical='center'> Relevance </Text>
             </TouchableOpacity>
           </View>
           <View style={{ flexDirection: 'row', width: '100%' }}>
@@ -438,9 +450,13 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: SIMILO_BLUE,
     alignItems: 'center',
-    padding: 10,
+    backgroundColor: '#4285f4',
     borderRadius: 10,
-    margin: 10
+    marginTop: 10,
+    marginBottom: 10,
+    marginLeft: 5,
+    marginRight: 5,
+    width: '25%',
   },
   touchableMenuItem: {
     width: '80%',

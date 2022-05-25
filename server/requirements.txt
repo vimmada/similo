@@ -22,7 +22,7 @@ MarkupSafe==1.0
 marshmallow==2.15.0
 pyasn1==0.4.2
 pycparser==2.18
-PyJWT==1.6.1
+PyJWT==2.4.0
 python-dateutil==2.6.1
 pytz==2018.3
 requests==2.18.4
